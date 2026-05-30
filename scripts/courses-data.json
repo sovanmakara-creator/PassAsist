@@ -1,0 +1,15 @@
+{
+  "1000-phrasal-verbs": {
+    "id": "1000-phrasal-verbs",
+    "title": "1000 phrasal verbs with meanings and sentences",
+    "description": "Learning resource",
+    "pdfUrl": "/resources/helpful/1000-phrasal-verbs-with-meanings-and-sentences.pdf",
+    "chapters": [
+      {
+        "id": "ch1",
+        "title": "Start",
+        "page": 1
+      }
+    ]
+  }
+}
