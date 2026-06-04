@@ -32,9 +32,28 @@ export const getGeminiLiveToken = createServerFn({ method: "GET" }).handler(asyn
   return { apiKey };
 });
 
+const ACADEMIC_WORDS = [
+  "aberration", "acquiesce", "alacrity", "amiable", "appease", "arcane", "assertive", "assiduous", "audacious", "austere",
+  "banal", "benevolent", "belligerent", "brazen", "cacophony", "candid", "capricious", "circumspect", "cogent", "collusion",
+  "complacency", "conundrum", "copious", "corroborate", "credulity", "cynical", "deferential", "deleterious", "demure", "deprecate",
+  "derisive", "despot", "diligent", "discordant", "disparate", "duplicity", "eclectic", "effrontery", "egregious", "elucidate",
+  "empirical", "enervate", "engender", "ephemeral", "equanimity", "equivocal", "esoteric", "euphemism", "exacerbate", "exemplary",
+  "facetious", "fallacious", "fastidious", "fortuitous", "frivolous", "garrulous", "gregarious", "harangue", "haughty", "hegemony",
+  "imminent", "immutable", "impetuous", "implacable", "inchoate", "indolent", "inexorable", "inimical", "innocuous", "inscrutable",
+  "insidious", "intrepid", "inveterate", "juxtapose", "laconic", "languid", "loquacious", "lucid", "magnanimous", "maverick",
+  "meticulous", "mitigate", "modicum", "morose", "mundane", "nefarious", "obdurate", "obfuscate", "obsequious", "obstinate",
+  "officious", "onerous", "ostentatious", "paradigm", "pariah", "paucity", "pejorative", "penchant", "perfidious", "perfunctory",
+  "pernicious", "perspicacious", "pervasive", "plausible", "pragmatic", "precipitous", "predilection", "proclivity", "prodigious", "prosaic"
+];
+
 export const getWordOfTheDay = createServerFn({ method: "GET" }).handler(async () => {
   const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
   if (!apiKey) throw new Error("AI is not configured");
+
+  // Determine the word deterministically based on UTC Epoch days
+  const oneDay = 1000 * 60 * 60 * 24;
+  const epochDays = Math.floor(Date.now() / oneDay);
+  const selectedWord = ACADEMIC_WORDS[epochDays % ACADEMIC_WORDS.length];
 
   const payload = {
     contents: [
@@ -42,7 +61,7 @@ export const getWordOfTheDay = createServerFn({ method: "GET" }).handler(async (
         role: "user",
         parts: [
           {
-            text: `Generate one C1/C2 vocabulary word useful for English proficiency exams (IELTS/TOEFL/TOEIC). Use this date string as a random seed to ensure a different word is selected each day: ${new Date().toISOString().split("T")[0]}. Pick a completely random word based on this seed.`,
+            text: `Generate vocabulary details for the specific C1/C2 academic word: "${selectedWord}". Ensure all generated definitions and context examples are tailored for advanced English proficiency exams (IELTS/TOEFL/TOEIC).`,
           },
         ],
       },
@@ -50,7 +69,7 @@ export const getWordOfTheDay = createServerFn({ method: "GET" }).handler(async (
     systemInstruction: {
       parts: [
         {
-          text: "You are an expert English tutor. Return a JSON object with 'word' (string, advanced vocab), 'phonetic' (string, phonetic spelling), 'partOfSpeech' (string), 'definition' (string), 'example' (string). Do not include markdown formatting.",
+          text: "You are an expert English tutor. Return a JSON object with 'word' (string, must match the requested word exactly), 'phonetic' (string, phonetic spelling), 'partOfSpeech' (string), 'definition' (string), 'example' (string). Do not include markdown formatting.",
         },
       ],
     },
@@ -85,12 +104,22 @@ export const getWordOfTheDay = createServerFn({ method: "GET" }).handler(async (
   const json = await res.json();
   const content = json.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!content) throw new Error("Failed to generate word content");
-  return JSON.parse(content) as {
+  
+  const parsed = JSON.parse(content) as {
     word: string;
     phonetic: string;
     partOfSpeech: string;
     definition: string;
     example: string;
+  };
+
+  const nextMidnight = new Date();
+  nextMidnight.setUTCHours(24, 0, 0, 0);
+  const expiresAt = nextMidnight.getTime();
+
+  return {
+    ...parsed,
+    expiresAt,
   };
 });
 

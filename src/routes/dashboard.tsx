@@ -141,6 +141,7 @@ function Dashboard() {
     partOfSpeech: string;
     definition: string;
     example: string;
+    expiresAt: number;
   } | null>(null);
   const [wordLoading, setWordLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -158,30 +159,69 @@ function Dashboard() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<number[]>([]);
 
-  // Load Word of the Day with local cache
+  // Load Word of the Day with local cache and automatic midnight update
   useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
     const fetchWord = async () => {
       try {
-        const today = new Date().toDateString();
         const cached = localStorage.getItem("word_of_the_day");
-        const cachedDate = localStorage.getItem("word_of_the_day_date");
-        if (cached && cachedDate === today) {
-          setWordData(JSON.parse(cached));
-          setWordLoading(false);
-          return;
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (parsed && typeof parsed.expiresAt === "number" && Date.now() < parsed.expiresAt) {
+              setWordData(parsed);
+              setWordLoading(false);
+              
+              // Set up timeout to auto-update when this cached word expires
+              const delay = parsed.expiresAt - Date.now();
+              timeoutId = setTimeout(() => {
+                setWordLoading(true);
+                fetchWordDirect();
+              }, delay);
+              return;
+            }
+          } catch (e) {
+            console.warn("Invalid cached word structure, clearing:", e);
+            localStorage.removeItem("word_of_the_day");
+          }
         }
 
-        const data = await getWordOfTheDay();
-        setWordData(data);
-        localStorage.setItem("word_of_the_day", JSON.stringify(data));
-        localStorage.setItem("word_of_the_day_date", today);
+        await fetchWordDirect();
       } catch (err) {
         console.error("Failed to load Word of the Day:", err);
-      } finally {
         setWordLoading(false);
       }
     };
+
+    const fetchWordDirect = async () => {
+      try {
+        const data = await getWordOfTheDay();
+        setWordData(data);
+        localStorage.setItem("word_of_the_day", JSON.stringify(data));
+        setWordLoading(false);
+
+        // Schedule next automatic update at the returned expiresAt
+        const delay = data.expiresAt - Date.now();
+        if (delay > 0) {
+          timeoutId = setTimeout(() => {
+            setWordLoading(true);
+            fetchWordDirect();
+          }, delay);
+        }
+      } catch (err) {
+        console.error("Failed to fetch Word of the Day directly:", err);
+        setWordLoading(false);
+      }
+    };
+
     fetchWord();
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   const startMiniTest = async () => {
