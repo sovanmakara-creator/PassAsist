@@ -30,7 +30,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 export const Route = createFileRoute("/examiner")({
   head: () => ({
     meta: [
-      { title: "Live AI Examiner — PassAsistant" },
+      { title: "Live AI Examiner — PassAssist" },
       { name: "description", content: "Real-time voice conversation with an AI examiner." },
     ],
   }),
@@ -839,7 +839,7 @@ Keep your responses conversational, concise, and natural.`;
           description="Have a real-time voice conversation with an AI examiner. Speak naturally."
         >
           <ShareButton
-            title="Live AI Examiner — PassAsistant"
+            title="Live AI Examiner — PassAssist"
             description="Have a real-time voice conversation with an AI examiner. Speak naturally and get immediate band scores."
           />
         </PageHeader>

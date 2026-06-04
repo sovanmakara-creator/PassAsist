@@ -39,15 +39,18 @@ export function useAuth() {
     let active = true;
     setRoleLoading(true);
 
+    const userId = user.id;
+    const userEmail = user.email;
+
     async function fetchRole() {
       try {
         const { data, error } = await supabase
           .from("user_roles")
           .select("role")
-          .eq("id", user.id)
+          .eq("id", userId)
           .single();
 
-        console.log("[useAuth Debug] user:", user.email, "role:", data?.role, "error:", error);
+        console.log("[useAuth Debug] user:", userEmail, "role:", data?.role, "error:", error);
 
         if (active) {
           setIsAdmin(!error && data?.role === "admin");

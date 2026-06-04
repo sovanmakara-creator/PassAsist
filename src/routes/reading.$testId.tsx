@@ -343,7 +343,7 @@ function ReadingTestPage() {
               description="Read the passage and answer the questions. Click any word for a definition."
             >
               <ShareButton
-                title={`${testData.title} — PassAsistant Reading`}
+                title={`${testData.title} — PassAssist Reading`}
                 description={testData.subtitle || "Practice reading comprehension with real-time AI assistance."}
               />
             </PageHeader>

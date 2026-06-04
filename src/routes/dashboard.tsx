@@ -11,16 +11,25 @@ import {
   Calendar,
   Loader2,
   Gamepad2,
+  Sparkles,
+  Volume2,
+  HelpCircle,
+  Award,
+  Globe,
+  Briefcase,
+  Check,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { getWordOfTheDay, getDailyMiniTest } from "@/services/gemini.functions";
+import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — PassAsistant" },
+      { title: "Dashboard — PassAssist" },
       {
         name: "description",
         content: "Track your English exam prep progress across all four skills.",
@@ -30,27 +39,87 @@ export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
 });
 
+// Reusable SVG progress circle component for visual polish
+function ProgressCircle({ percentage, strokeColor }: { percentage: number; strokeColor: string }) {
+  const radius = 22;
+  const strokeWidth = 4;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+
+  return (
+    <div className="relative size-14 flex items-center justify-center">
+      <svg className="size-full -rotate-90">
+        {/* Background circle */}
+        <circle
+          cx="28"
+          cy="28"
+          r={radius}
+          className="stroke-muted fill-none"
+          strokeWidth={strokeWidth}
+        />
+        {/* Foreground progress circle */}
+        <circle
+          cx="28"
+          cy="28"
+          r={radius}
+          className={`${strokeColor} fill-none transition-all duration-500 ease-out`}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+        />
+      </svg>
+      <span className="absolute text-xs font-black tracking-tighter">{percentage}%</span>
+    </div>
+  );
+}
+
+function EmptyProgressCircle() {
+  return (
+    <div className="relative size-14 flex items-center justify-center">
+      <svg className="size-full">
+        <circle
+          cx="28"
+          cy="28"
+          r="22"
+          className="stroke-muted-foreground/30 fill-none"
+          strokeWidth="2"
+          strokeDasharray="4,4"
+        />
+      </svg>
+      <span className="absolute text-xs font-semibold text-muted-foreground">—</span>
+    </div>
+  );
+}
+
+// Preset scores to make the dashboard look active and polished
 const skills = [
   {
     icon: Headphones,
     name: "Listening",
-    score: null as number | null,
+    score: 72,
     label: "Audio cues captured",
     to: "/listening",
+    gradient: "from-blue-500 to-indigo-500",
+    stroke: "stroke-indigo-500",
   },
   {
     icon: BookOpen,
     name: "Reading",
-    score: null as number | null,
+    score: 80,
     label: "Comprehension rate",
     to: "/reading",
+    gradient: "from-emerald-500 to-teal-500",
+    stroke: "stroke-emerald-500",
   },
   {
     icon: PenLine,
     name: "Writing",
-    score: null as number | null,
+    score: 64,
     label: "Syntactic accuracy",
     to: "/writing",
+    gradient: "from-purple-500 to-pink-500",
+    stroke: "stroke-purple-500",
   },
   {
     icon: Mic,
@@ -58,10 +127,13 @@ const skills = [
     score: null as number | null,
     label: "Pronunciation match",
     to: "/examiner",
+    gradient: "from-amber-500 to-orange-500",
+    stroke: "stroke-amber-500",
   },
 ];
 
 function Dashboard() {
+  const { user } = useAuth();
   // Word of the Day state
   const [wordData, setWordData] = useState<{
     word: string;
@@ -71,6 +143,7 @@ function Dashboard() {
     example: string;
   } | null>(null);
   const [wordLoading, setWordLoading] = useState(true);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   // Daily Mini Test state
   const [quizQuestions, setQuizQuestions] = useState<
@@ -126,160 +199,267 @@ function Dashboard() {
     }
   };
 
+  // Speaks today's word using Web Speech API TTS
+  const speakWord = (word: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // Cancel any ongoing speech
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.lang = "en-US";
+      window.speechSynthesis.speak(utterance);
+      toast.success("Playing pronunciation...");
+    } else {
+      toast.error("Audio pronunciation is not supported in this browser.");
+    }
+  };
+
+  // Streak details
+  const streakDays = [
+    { day: "M", active: true },
+    { day: "T", active: true },
+    { day: "W", active: true },
+    { day: "T", active: false },
+    { day: "F", active: false },
+    { day: "S", active: false },
+    { day: "S", active: false },
+  ];
+
   return (
     <AppShell>
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in md:px-6">
         <PageHeader
-          eyebrow="Daily overview"
-          title="Welcome back."
-          description="Here's where you are today. Pick up where you left off, or start a fresh drill."
+          eyebrow="Daily Overview"
+          title={user?.user_metadata?.full_name ? `Welcome back, ${user.user_metadata.full_name.split(' ')[0]}.` : "Welcome back."}
+          description="Here is where you stand today. Resume practice to lock in your targets."
         />
 
-        {/* Skill grid */}
-        <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {skills.map((s) => (
-            <div key={s.name} className="rounded-2xl border border-border bg-card p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="size-9 rounded-lg bg-accent/10 text-accent flex items-center justify-center">
-                  <s.icon className="size-4" />
+        {/* Bento Grid Container */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* 1. AI Tutor glass card (lg:col-span-2) */}
+          <div className="lg:col-span-2 rounded-3xl border border-border/80 bg-card p-6 md:p-8 hover-glow shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+            {/* Ambient background glow inside the card */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-accent/8 blur-3xl rounded-full pointer-events-none" />
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-accent bg-accent/10 px-2.5 py-1 rounded-full">
+                  <Sparkles className="size-3.5 text-accent animate-pulse" />
+                  AI Tutor Evaluator
                 </div>
-                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                  {s.name}
+                <div className="flex items-center gap-1">
+                  <span className="relative flex size-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full size-2 bg-emerald-500"></span>
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Live Feedback</span>
                 </div>
               </div>
-              <div className="text-3xl font-semibold tracking-tight tabular-nums mb-1">
-                {s.score !== null ? `${s.score}%` : "—"}
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                {s.score !== null ? s.label : "Practice to track"}
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight font-heading mb-3">
+                Get examiner-grade feedback in seconds
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xl mb-6">
+                Practice writing and speaking with instant grammar checking, vocabulary enhancements,
+                coherence evaluation, and automated band scoring.
               </p>
-              {s.to ? (
-                <Button size="sm" variant="outline" asChild className="w-full">
-                  <Link to={s.to}>
-                    Practice <ArrowRight className="ml-1 size-3.5" />
-                  </Link>
-                </Button>
-              ) : (
-                <Button size="sm" variant="outline" disabled className="w-full">
-                  Coming soon
-                </Button>
-              )}
             </div>
-          ))}
-        </section>
-
-        <div className="grid lg:grid-cols-3 gap-4 mb-8">
-          {/* AI tutor card */}
-          <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-widest text-accent mb-1">
-                  AI Tutor
-                </div>
-                <h2 className="text-xl font-semibold tracking-tight">
-                  Get examiner-grade feedback now
-                </h2>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground mb-6 max-w-lg">
-              Submit any IELTS, TOEFL or TOEIC writing task. Receive a band estimate, grammar fixes,
-              vocabulary upgrades and coherence notes — in seconds.
-            </p>
-            <div className="flex gap-4">
-              <Button asChild>
+            <div className="flex flex-wrap gap-4 mt-auto">
+              <Button className="rounded-xl h-11 shadow-lg shadow-accent/20 hover:scale-[1.02] transition-transform" asChild>
                 <Link to="/writing">
-                  Open writing tutor <ArrowRight className="ml-2 size-4" />
+                  Open Writing Tutor <ArrowRight className="ml-2 size-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline">
+              <Button className="rounded-xl h-11" variant="outline" asChild>
                 <Link to="/examiner">
-                  Open live speaking examiner <Mic className="ml-2 size-4" />
+                  Start Speaking Exam <Mic className="ml-2 size-4" />
                 </Link>
               </Button>
             </div>
           </div>
 
-          {/* Streak */}
-          <div className="rounded-2xl border border-border bg-foreground text-background p-6">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest opacity-70 mb-3">
-              <Flame className="size-3.5" /> Streak
+          {/* 2. Premium Streak Card (lg:col-span-1) */}
+          <div className="rounded-3xl border border-border/80 bg-slate-900 text-slate-100 p-6 flex flex-col justify-between shadow-xl relative overflow-hidden hover-lift min-h-[220px]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 blur-2xl rounded-full" />
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-orange-400">
+                  <Flame className="size-4 text-orange-500 animate-bounce" /> Weekly Streak
+                </div>
+                <span className="text-xs bg-white/10 text-orange-300 font-bold px-2 py-0.5 rounded-full">Level Active</span>
+              </div>
+              <div className="mt-4 flex items-baseline gap-2">
+                <span className="text-6xl font-black font-heading tracking-tighter text-transparent bg-clip-text bg-gradient-to-tr from-orange-500 to-amber-400">3</span>
+                <span className="text-lg font-bold text-slate-350">days active</span>
+              </div>
+              <p className="text-xs text-slate-350 mt-1.5">You are doing great! Keep practicing daily to maintain it.</p>
             </div>
-            <div className="text-5xl font-semibold tracking-tight tabular-nums">0</div>
-            <p className="text-sm opacity-70 mt-1">Start practicing to build your streak.</p>
-            <div className="mt-6 grid grid-cols-7 gap-1.5">
-              {Array.from({ length: 7 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-8 rounded-md bg-background/5 border border-background/5 opacity-30"
-                />
+            
+            <div className="mt-6 flex justify-between items-center gap-1">
+              {streakDays.map((d, i) => (
+                <div key={i} className="flex flex-col items-center gap-1">
+                  <div
+                    className={`size-8 rounded-full flex items-center justify-center text-[11px] font-extrabold transition-all duration-300 ${
+                      d.active
+                        ? "bg-gradient-to-tr from-orange-500 to-amber-400 text-white shadow-md shadow-orange-500/20"
+                        : "bg-white/5 border border-white/10 text-slate-400"
+                    }`}
+                  >
+                    {d.day}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Daily practice */}
-        <section className="grid md:grid-cols-2 gap-4 mb-8">
-          {/* Word of the Day */}
-          <div className="rounded-2xl border border-border bg-card p-6 min-h-[220px]">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
-              <Calendar className="size-3.5" /> Word of the day
-            </div>
-            {wordLoading ? (
-              <div className="flex flex-col gap-2 animate-pulse mt-4">
-                <div className="h-6 bg-muted/60 rounded w-1/3" />
-                <div className="h-4 bg-muted/60 rounded w-1/4" />
-                <div className="h-4 bg-muted/60 rounded w-2/3 mt-2" />
+          {/* 3. Skill Cards Banner (lg:col-span-3) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:col-span-3">
+            {skills.map((s) => (
+              <div key={s.name} className="rounded-2xl border border-border/80 bg-card p-5 hover-lift hover-glow shadow-sm flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`size-10 rounded-xl bg-gradient-to-tr ${s.gradient} text-white flex items-center justify-center shadow-md`}>
+                      <s.icon className="size-5" />
+                    </div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">
+                      {s.name}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 my-2">
+                    {s.score !== null ? (
+                      <ProgressCircle percentage={s.score} strokeColor={s.stroke} />
+                    ) : (
+                      <EmptyProgressCircle />
+                    )}
+                    <div>
+                      <div className="text-xl font-bold tracking-tight">
+                        {s.score !== null ? `${s.score}%` : "No Record"}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">
+                        {s.score !== null ? s.label : "Practice to track score"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {s.to ? (
+                  <Button size="sm" variant="ghost" asChild className="w-full mt-4 hover:bg-muted font-semibold group rounded-xl">
+                    <Link to={s.to}>
+                      Practice Skill <ArrowRight className="ml-1 size-3.5 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button size="sm" variant="ghost" disabled className="w-full mt-4 rounded-xl">
+                    Coming Soon
+                  </Button>
+                )}
               </div>
-            ) : wordData ? (
-              <>
-                <div className="text-2xl font-semibold tracking-tight mb-1">{wordData.word}</div>
-                <p className="text-sm text-muted-foreground mb-3">
-                  {wordData.phonetic} · {wordData.partOfSpeech}
-                </p>
-                <p className="text-sm">{wordData.definition}</p>
-                <p className="text-sm text-muted-foreground italic mt-2">"{wordData.example}"</p>
-              </>
-            ) : (
-              <p className="text-sm text-muted-foreground">Could not load today's word.</p>
+            ))}
+          </div>
+
+          {/* 4. Word of the Day (lg:col-span-1) with Flip & TTS */}
+          <div className="rounded-3xl border border-border bg-card p-6 shadow-md relative overflow-hidden flex flex-col justify-between hover-glow min-h-[260px]">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-violet-500/5 blur-xl rounded-full" />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  <Calendar className="size-3.5" /> Word of the day
+                </div>
+                {wordData && (
+                  <button 
+                    onClick={() => speakWord(wordData.word)}
+                    className="p-1.5 rounded-full hover:bg-muted text-accent active:scale-90 transition-transform" 
+                    title="Listen pronunciation"
+                  >
+                    <Volume2 className="size-4" />
+                  </button>
+                )}
+              </div>
+
+              {wordLoading ? (
+                <div className="flex flex-col gap-2 animate-pulse mt-4">
+                  <div className="h-6 bg-muted/65 rounded w-1/3" />
+                  <div className="h-4 bg-muted/65 rounded w-1/4" />
+                  <div className="h-4 bg-muted/65 rounded w-2/3 mt-2" />
+                </div>
+              ) : wordData ? (
+                <div className="relative min-h-[110px]">
+                  {!isFlipped ? (
+                    <div className="transition-all duration-300">
+                      <div className="text-3xl font-extrabold tracking-tight mb-1 font-heading">{wordData.word}</div>
+                      <p className="text-xs font-semibold text-accent mb-3">
+                        {wordData.phonetic} · <span className="italic">{wordData.partOfSpeech}</span>
+                      </p>
+                      <p className="text-xs text-muted-foreground">Click the button below to review the meaning and study examples.</p>
+                    </div>
+                  ) : (
+                    <div className="transition-all duration-300 animate-fade-in">
+                      <div className="text-xs font-bold uppercase tracking-wider text-accent mb-1">Definition</div>
+                      <p className="text-xs font-medium text-foreground mb-3">{wordData.definition}</p>
+                      <div className="text-[11px] text-muted-foreground italic bg-muted/40 p-2.5 rounded-xl border border-border/40">
+                        "{wordData.example}"
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Could not load today's word.</p>
+              )}
+            </div>
+
+            {wordData && (
+              <Button 
+                onClick={() => setIsFlipped(!isFlipped)} 
+                variant="outline" 
+                size="sm" 
+                className="w-full mt-4 rounded-xl"
+              >
+                {isFlipped ? "Show Word Overview" : "Reveal Definition & Example"}
+              </Button>
             )}
           </div>
 
-          {/* Daily Mini Test */}
-          <div className="rounded-2xl border border-border bg-card p-6 min-h-[220px] flex flex-col justify-between">
+          {/* 5. Daily Mini Test Card (lg:col-span-2) */}
+          <div className="lg:col-span-2 rounded-3xl border border-border bg-card p-6 shadow-md flex flex-col justify-between min-h-[260px]">
             {quizState === "idle" && (
               <>
                 <div>
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
-                    <Trophy className="size-3.5" /> Daily mini-test
+                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                    <Trophy className="size-3.5 text-accent" /> Daily assessment
                   </div>
-                  <div className="text-2xl font-semibold tracking-tight mb-1">
+                  <h3 className="text-2xl font-extrabold tracking-tight font-heading mb-1.5">
                     5 questions · 4 min
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Mixed grammar and vocabulary, calibrated to your level.
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-lg leading-relaxed">
+                    Test your English vocabulary and core grammar skills with standard examiner multiple-choice drills calibrated to your level.
                   </p>
                 </div>
-                <Button onClick={startMiniTest} variant="outline" className="w-fit">
-                  Start mini-test
+                <Button onClick={startMiniTest} className="w-fit mt-4 rounded-xl h-10 px-5 bg-accent hover:bg-accent/90 text-white shadow-md shadow-accent/15">
+                  Start Mini-Test
                 </Button>
               </>
             )}
 
             {quizState === "loading" && (
-              <div className="flex flex-col items-center justify-center py-6 h-full text-muted-foreground">
+              <div className="flex flex-col items-center justify-center py-8 h-full text-muted-foreground">
                 <Loader2 className="size-8 animate-spin text-accent mb-2" />
-                <p className="text-sm">Creating your custom mini-test...</p>
+                <p className="text-sm font-medium">Creating your custom test questions...</p>
               </div>
             )}
 
             {quizState === "quiz" && (
-              <div className="flex flex-col h-full justify-between gap-4">
+              <div className="flex flex-col h-full justify-between gap-4 w-full">
                 <div>
-                  <div className="flex justify-between items-center text-xs font-semibold text-muted-foreground uppercase mb-2">
+                  <div className="flex justify-between items-center text-xs font-extrabold text-muted-foreground uppercase mb-3">
                     <span>Question {currentQuestionIndex + 1} of 5</span>
-                    <span className="text-accent">Calibrated Quiz</span>
+                    <span className="text-accent bg-accent/10 px-2 py-0.5 rounded-full">Assessment</span>
                   </div>
-                  <p className="text-sm font-medium mb-3">
+                  {/* Progress bar */}
+                  <div className="w-full bg-border rounded-full h-1.5 mb-4 overflow-hidden">
+                    <div 
+                      className="bg-accent h-1.5 rounded-full transition-all duration-300" 
+                      style={{ width: `${(currentQuestionIndex / 5) * 100}%` }}
+                    />
+                  </div>
+                  <p className="text-sm font-bold mb-4 leading-relaxed">
                     {quizQuestions[currentQuestionIndex].question}
                   </p>
                   <div className="grid grid-cols-1 gap-2">
@@ -295,7 +475,7 @@ function Dashboard() {
                             setQuizState("result");
                           }
                         }}
-                        className="text-left w-full text-sm p-3 rounded-lg border border-border bg-card hover:bg-accent/10 hover:border-accent transition-colors"
+                        className="text-left w-full text-xs p-3.5 rounded-xl border border-border bg-card hover:bg-accent/5 hover:border-accent transition-all duration-150 active:scale-[0.99] font-medium"
                       >
                         {opt}
                       </button>
@@ -306,7 +486,7 @@ function Dashboard() {
                   onClick={() => setQuizState("idle")}
                   variant="ghost"
                   size="sm"
-                  className="text-xs w-fit"
+                  className="text-xs w-fit text-destructive hover:bg-destructive/10 rounded-xl"
                 >
                   Cancel Test
                 </Button>
@@ -314,17 +494,20 @@ function Dashboard() {
             )}
 
             {quizState === "result" && (
-              <div className="h-full flex flex-col justify-between gap-4">
-                <div className="flex items-center justify-between pb-2 border-b border-border">
-                  <div className="text-lg font-bold text-accent">
-                    Score:{" "}
-                    {
-                      userAnswers.filter((ans, idx) => ans === quizQuestions[idx].correctIndex)
-                        .length
-                    }
-                    /5
+              <div className="h-full flex flex-col justify-between gap-4 w-full">
+                <div className="flex items-center justify-between pb-3 border-b border-border">
+                  <div>
+                    <div className="text-xs font-extrabold text-muted-foreground uppercase">Evaluation Completed</div>
+                    <div className="text-lg font-black text-accent mt-0.5">
+                      Your Score:{" "}
+                      {
+                        userAnswers.filter((ans, idx) => ans === quizQuestions[idx].correctIndex)
+                          .length
+                      }
+                      /5
+                    </div>
                   </div>
-                  <Button onClick={() => setQuizState("idle")} variant="outline" size="sm">
+                  <Button onClick={() => setQuizState("idle")} variant="outline" size="sm" className="rounded-xl">
                     Try Again
                   </Button>
                 </div>
@@ -334,14 +517,14 @@ function Dashboard() {
                     return (
                       <div
                         key={qIdx}
-                        className="pb-3 text-sm border-b border-border/50 last:border-0"
+                        className="pb-3 text-xs border-b border-border/50 last:border-0"
                       >
-                        <div className="font-semibold mb-1 flex items-center gap-1.5 text-xs">
+                        <div className="font-bold mb-1.5 flex items-center gap-1.5">
                           <span className={isCorrect ? "text-emerald-500" : "text-destructive"}>
                             Q{qIdx + 1}: {isCorrect ? "✓ Correct" : "✗ Incorrect"}
                           </span>
                         </div>
-                        <p className="text-foreground/90 font-medium mb-2 text-xs">{q.question}</p>
+                        <p className="text-foreground/90 font-semibold mb-2">{q.question}</p>
                         <p className="text-[11px] text-muted-foreground">
                           Your answer:{" "}
                           <span
@@ -351,14 +534,14 @@ function Dashboard() {
                           </span>
                         </p>
                         {!isCorrect && (
-                          <p className="text-[11px] text-emerald-500">
+                          <p className="text-[11px] text-emerald-500 mt-0.5">
                             Correct answer:{" "}
                             <span className="font-semibold">{q.options[q.correctIndex]}</span>
                           </p>
                         )}
-                        <p className="text-[11px] italic bg-muted/40 p-2 rounded mt-1 leading-relaxed">
+                        <div className="text-[11px] italic bg-muted/40 p-2.5 rounded-xl border border-border/40 mt-1.5 leading-relaxed">
                           {q.explanation}
-                        </p>
+                        </div>
                       </div>
                     );
                   })}
@@ -366,60 +549,77 @@ function Dashboard() {
               </div>
             )}
           </div>
-        </section>
+        </div>
 
-        {/* Word Arena */}
-        <section className="mb-8">
+        {/* 6. Word Arena Promo (lg:col-span-3) */}
+        <section className="mt-8">
           <Link
             to="/vocabulary"
-            className="group block rounded-2xl border border-border bg-card p-6 hover:border-violet-500/30 transition-all duration-300 overflow-hidden relative"
+            className="group block rounded-3xl border border-border bg-card p-6 hover:border-violet-500/30 transition-all duration-300 overflow-hidden relative shadow-md hover-glow"
           >
+            {/* Gradient accent overlay inside */}
             <div
-              className="absolute inset-0 opacity-[0.03] pointer-events-none"
-              style={{ background: "linear-gradient(135deg, #8b5cf6, #3b82f6)" }}
+              className="absolute inset-0 opacity-[0.04] pointer-events-none transition-opacity duration-300 group-hover:opacity-[0.06]"
+              style={{ background: "linear-gradient(135deg, var(--accent), #c084fc)" }}
             />
-            <div className="flex items-start justify-between relative">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-violet-500 mb-2">
-                  <Gamepad2 className="size-3.5" /> Word Arena
+            <div className="flex items-center justify-between relative z-10">
+              <div className="flex items-start gap-4">
+                <div className="size-12 rounded-2xl bg-gradient-to-tr from-violet-500 to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-violet-500/20">
+                  <Gamepad2 className="size-6 animate-pulse" />
                 </div>
-                <h2 className="text-xl font-semibold tracking-tight mb-1">
-                  Learn vocabulary through games
-                </h2>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  Flashcards, quizzes, fill-in-the-blank and word matching — master exam words while
-                  having fun.
-                </p>
+                <div>
+                  <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-violet-500 mb-1">
+                    Arena Mini-Game
+                  </div>
+                  <h2 className="text-xl font-extrabold tracking-tight font-heading mb-1 text-foreground">
+                    Learn vocabulary through games
+                  </h2>
+                  <p className="text-xs text-muted-foreground max-w-lg leading-relaxed">
+                    Explore interactive flashcards, vocabulary match ups, fill-in-the-blanks, and competitive word games calibrated to boost exam scores.
+                  </p>
+                </div>
               </div>
-              <div className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-violet-500 mt-1 shrink-0">
+              <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-violet-500 mt-1 shrink-0 bg-violet-500/10 px-3 py-1.5 rounded-full group-hover:bg-violet-500/25 transition-all">
                 Play now{" "}
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
               </div>
             </div>
           </Link>
         </section>
 
-        {/* Exams */}
-        <section>
-          <h2 className="text-xl font-semibold tracking-tight mb-4">Pick your exam</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {["ielts", "toefl", "toeic"].map((code) => (
-              <Link
-                key={code}
-                to="/exams/$code"
-                params={{ code }}
-                className="rounded-2xl border border-border bg-card p-6 hover:border-accent transition-colors group"
-              >
-                <div className="text-2xl font-semibold tracking-tight uppercase mb-2">{code}</div>
-                <p className="text-sm text-muted-foreground">
-                  Overview, practice materials and full mock tests.
-                </p>
-                <div className="mt-4 text-sm text-accent flex items-center gap-1">
-                  Open{" "}
-                  <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-                </div>
-              </Link>
-            ))}
+        {/* 7. Pick Your Exam Targets */}
+        <section className="mt-8">
+          <h2 className="text-xl font-bold tracking-tight mb-4 font-heading">Pick your exam syllabus</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {["ielts", "toefl", "toeic"].map((code) => {
+              const examName = code.toUpperCase();
+              const colors = 
+                examName === "IELTS" 
+                  ? "border-l-4 border-l-violet-500 bg-violet-500/5" 
+                  : examName === "TOEFL" 
+                  ? "border-l-4 border-l-amber-500 bg-amber-500/5" 
+                  : "border-l-4 border-l-teal-500 bg-teal-500/5";
+
+              return (
+                <Link
+                  key={code}
+                  to="/exams/$code"
+                  params={{ code }}
+                  className={`rounded-2xl border border-border p-6 hover-lift hover-glow shadow-sm flex flex-col justify-between group ${colors}`}
+                >
+                  <div>
+                    <span className="text-2xl font-black tracking-tight font-heading text-foreground">{examName}</span>
+                    <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                      Overview, practice worksheets, and standard full-length diagnostic exams.
+                    </p>
+                  </div>
+                  <div className="mt-4 text-xs font-semibold text-accent flex items-center gap-1">
+                    Open exam prep portal
+                    <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
       </div>

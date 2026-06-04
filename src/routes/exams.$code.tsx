@@ -31,7 +31,7 @@ export const Route = createFileRoute("/exams/$code")({
     const ex = EXAM_DATA[params.code as keyof typeof EXAM_DATA];
     return {
       meta: [
-        { title: ex ? `${ex.name} prep — PassAsistant` : "Exam — PassAsistant" },
+        { title: ex ? `${ex.name} prep — PassAssist` : "Exam — PassAssist" },
         { name: "description", content: ex?.desc ?? "Exam prep section." },
       ],
     };
@@ -399,7 +399,7 @@ function ExamPage() {
       <div className="max-w-6xl mx-auto px-6 py-10">
         <PageHeader eyebrow={exam.scale} title={`${exam.name} prep`} description={exam.desc}>
           <ShareButton
-            title={`${exam.name} Exam Prep — PassAsistant`}
+            title={`${exam.name} Exam Prep — PassAssist`}
             description={`Prepare for the ${exam.name} exam with targeted practice tests, tips, and direct AI-powered feedback.`}
           />
         </PageHeader>

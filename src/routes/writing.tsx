@@ -32,7 +32,7 @@ export const Route = createFileRoute("/writing")({
   validateSearch: (s) => SearchSchema.parse(s),
   head: () => ({
     meta: [
-      { title: "AI Writing Tutor — PassAsistant" },
+      { title: "AI Writing Tutor — PassAssist" },
       {
         name: "description",
         content:
@@ -367,7 +367,7 @@ function WritingPage() {
           description="Pick an exam, write your response, and get examiner-grade AI feedback in seconds."
         >
           <ShareButton
-            title="AI Writing Tutor — PassAsistant"
+            title="AI Writing Tutor — PassAssist"
             description="Practice writing and get instant examiner-grade feedback in seconds."
           />
         </PageHeader>

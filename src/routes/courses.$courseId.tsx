@@ -260,11 +260,11 @@ const COURSES: Record<string, Course> = {
 export const Route = createFileRoute("/courses/$courseId")({
   validateSearch: (s) => CourseSearchSchema.parse(s),
   head: ({ loaderData }) => {
-    const course = loaderData?.course;
+    const course = (loaderData as any)?.course;
     return {
       meta: [
         {
-          title: course ? `${course.title} — PassAsistant` : "Course — PassAsistant"
+          title: course ? `${course.title} — PassAssist` : "Course — PassAssist"
         }
       ]
     };
@@ -289,8 +289,8 @@ export const Route = createFileRoute("/courses/$courseId")({
             title: courseData.title,
             description: courseData.description || "",
             pdfUrl: courseData.pdf_url || "",
-            audioUrl: courseData.audio_url || undefined,
-            chapters: (courseData.chapters_json as Chapter[]) || []
+            audioUrl: (courseData as any).audio_url || undefined,
+            chapters: (courseData.chapters_json as unknown as Chapter[]) || []
           }
         };
       }
@@ -313,7 +313,7 @@ export const Route = createFileRoute("/courses/$courseId")({
             title: resourceData.title,
             description: resourceData.description || "",
             pdfUrl: resourceData.url,
-            audioUrl: resourceData.audio_url || undefined,
+            audioUrl: (resourceData as any).audio_url || undefined,
             chapters: [
               {
                 id: "ch1",
@@ -341,7 +341,7 @@ export const Route = createFileRoute("/courses/$courseId")({
 });
 
 function CourseViewer() {
-  const { course } = Route.useLoaderData();
+  const { course } = Route.useLoaderData() as { course: Course };
   const search = Route.useSearch();
   
   const getDefaultFromPath = () => {
@@ -469,8 +469,8 @@ function CourseViewer() {
             </div>
           )}
           <ShareButton
-            title={`${course.title} — PassAsistant Course`}
-            description={course.description || "Learn and prepare with study resources on PassAsistant."}
+            title={`${course.title} — PassAssist Course`}
+            description={course.description || "Learn and prepare with study resources on PassAssist."}
           />
         </div>
       </header>
@@ -485,7 +485,7 @@ function CourseViewer() {
             <p className="text-xs text-muted-foreground">{course.chapters.length} chapters</p>
           </div>
           <div className="flex-1 overflow-y-auto p-3 space-y-1">
-            {course.chapters.map((chapter, index) => {
+            {course.chapters.map((chapter: Chapter, index: number) => {
               const isActive = activeChapter?.id === chapter.id;
               return (
                 <button

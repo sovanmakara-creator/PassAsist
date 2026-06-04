@@ -312,7 +312,7 @@ export function useSound() {
 
   return {
     playCorrect: useCallback(() => play(sfxCorrect), [play]),
-    playWrong: useCallback(() => play(sfxWrong), [play]),
+    playWrong: useCallback((_arg?: any) => play(sfxWrong), [play]),
     playFlip: useCallback(() => play(sfxFlip), [play]),
     playMatch: useCallback(() => play(sfxMatch), [play]),
     playStreak: useCallback(() => play(sfxStreak), [play]),

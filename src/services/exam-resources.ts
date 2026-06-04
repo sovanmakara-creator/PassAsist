@@ -383,7 +383,7 @@ export const EXAM_RESOURCES: Record<string, ExamResourceMap> = {
       {
         id: "ielts-w-internal",
         title: "AI Writing Tutor — Task 1 & 2",
-        source: "PassAsistant",
+        source: "PassAssist",
         url: "/writing?exam=ielts_task2",
         type: "practice",
         difficulty: "intermediate",
@@ -669,7 +669,7 @@ export const EXAM_RESOURCES: Record<string, ExamResourceMap> = {
       {
         id: "toefl-w-internal",
         title: "AI Writing Tutor — TOEFL",
-        source: "PassAsistant",
+        source: "PassAssist",
         url: "/writing?exam=toefl",
         type: "practice",
         difficulty: "intermediate",

@@ -20,23 +20,23 @@ import {
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us — PassAsistant" },
+      { title: "About Us — PassAssist" },
       {
         name: "description",
         content:
-          "Learn more about PassAsistant and our mission to provide affordable, high-quality AI-powered English exam preparation.",
+          "Learn more about PassAssist and our mission to provide affordable, high-quality AI-powered English exam preparation.",
       },
     ],
   }),
   component: AboutPage,
 });
 
-const DEFAULT_CONTENT = `# About PassAsistant
+const DEFAULT_CONTENT = `# About PassAssist
 
-PassAsistant is an advanced AI-powered English proficiency exam preparation platform designed for serious learners preparing for IELTS, TOEFL, and TOEIC tests.
+PassAssist is an advanced AI-powered English proficiency exam preparation platform designed for serious learners preparing for IELTS, TOEFL, and TOEIC tests.
 
 ## Our Mission
-Our mission is to democratize high-quality test prep. Private exam tutoring is expensive and inaccessible to many. PassAsistant leverages state-of-the-art AI to provide immediate, detailed feedback on writing, speaking, listening, and reading skills at a fraction of the cost.
+Our mission is to democratize high-quality test prep. Private exam tutoring is expensive and inaccessible to many. PassAssist leverages state-of-the-art AI to provide immediate, detailed feedback on writing, speaking, listening, and reading skills at a fraction of the cost.
 
 ## Key Features
 - **AI Writing Tutor**: Real-time evaluation of essays with band score estimations, grammar explanations, and vocabulary enhancements.
@@ -126,7 +126,7 @@ export function AboutPage() {
         <div className="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
             <span className="text-lg font-bold tracking-tight transition-colors group-hover:text-accent">
-              Pass<span className="text-accent">Asistant</span>
+              Pass<span className="text-accent">Assist</span>
             </span>
           </Link>
           <div className="flex items-center gap-1.5">
@@ -246,7 +246,7 @@ export function AboutPage() {
                 to="/"
                 className="text-lg font-bold tracking-tight inline-flex items-center gap-1.5"
               >
-                Pass<span className="text-accent">Asistant</span>
+                Pass<span className="text-accent">Assist</span>
               </Link>
               <p className="mt-1 text-xs text-muted-foreground max-w-xs leading-relaxed">
                 AI-powered English exam preparation — IELTS, TOEFL & TOEIC.
@@ -274,7 +274,7 @@ export function AboutPage() {
           </div>
 
           <div className="mt-6 pt-5 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-            <span>© {new Date().getFullYear()} PassAsistant. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} PassAssist. All rights reserved.</span>
             <span className="flex items-center gap-1.5">
               Built with <Sparkles className="size-3 text-accent" /> AI
             </span>

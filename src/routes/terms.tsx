@@ -21,11 +21,11 @@ import {
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Service — PassAsistant" },
+      { title: "Terms of Service — PassAssist" },
       {
         name: "description",
         content:
-          "Terms of Service and usage conditions for the PassAsistant English exam preparation website.",
+          "Terms of Service and usage conditions for the PassAssist English exam preparation website.",
       },
     ],
   }),
@@ -36,22 +36,22 @@ const DEFAULT_CONTENT = `# Terms of Service
 
 Last updated: ${new Date().toLocaleDateString()}
 
-Please read these Terms of Service ("Terms") carefully before using PassAsistant.
+Please read these Terms of Service ("Terms") carefully before using PassAssist.
 
 ## 1. Agreement to Terms
-By accessing or using PassAsistant, you agree to be bound by these Terms. If you do not agree to these Terms, do not use the service.
+By accessing or using PassAssist, you agree to be bound by these Terms. If you do not agree to these Terms, do not use the service.
 
 ## 2. Learning Material & AI Feedback
-PassAsistant provides AI-generated feedback for English proficiency exams (IELTS, TOEFL, TOEIC). This feedback is for educational purposes and is not an official score. We do not guarantee score improvements.
+PassAssist provides AI-generated feedback for English proficiency exams (IELTS, TOEFL, TOEIC). This feedback is for educational purposes and is not an official score. We do not guarantee score improvements.
 
 ## 3. Limitation of Liability
-In no event shall PassAsistant be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or in connection with your use of the service.`;
+In no event shall PassAssist be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or in connection with your use of the service.`;
 
 const KEY_POINTS = [
   {
     icon: Shield,
     title: "Your Agreement",
-    description: "By using PassAsistant, you agree to be bound by these terms and conditions.",
+    description: "By using PassAssist, you agree to be bound by these terms and conditions.",
   },
   {
     icon: BookOpen,
@@ -119,7 +119,7 @@ export function TermsPage() {
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
             <span className="text-lg font-bold tracking-tight transition-colors">
-              Pass<span className="text-accent">Asistant</span>
+              Pass<span className="text-accent">Assist</span>
             </span>
           </Link>
           <div className="flex items-center gap-2">
@@ -172,7 +172,7 @@ export function TermsPage() {
                   Terms of Service
                 </h1>
                 <p className="mt-3 text-muted-foreground text-base sm:text-lg max-w-2xl leading-relaxed">
-                  Please read these terms carefully before using PassAsistant. They govern your use of our
+                  Please read these terms carefully before using PassAssist. They govern your use of our
                   platform and services.
                 </p>
 
@@ -293,7 +293,7 @@ export function TermsPage() {
               </Link>
             </div>
             <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} PassAsistant. All rights reserved.
+              © {new Date().getFullYear()} PassAssist. All rights reserved.
             </p>
           </div>
         </div>

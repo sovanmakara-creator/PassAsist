@@ -21,11 +21,11 @@ import {
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — PassAsistant" },
+      { title: "Privacy Policy — PassAssist" },
       {
         name: "description",
         content:
-          "Privacy Policy for PassAsistant English exam preparation website. Detailed terms about information collection, cookies, and Google AdSense policies.",
+          "Privacy Policy for PassAssist English exam preparation website. Detailed terms about information collection, cookies, and Google AdSense policies.",
       },
     ],
   }),
@@ -36,7 +36,7 @@ const DEFAULT_CONTENT = `# Privacy Policy
 
 Last updated: ${new Date().toLocaleDateString()}
 
-PassAsistant ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how your personal information is collected, used, and disclosed by PassAsistant.
+PassAssist ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how your personal information is collected, used, and disclosed by PassAssist.
 
 ## 1. Information We Collect
 We collect information you provide directly to us when you create an account, practice writing or speaking tasks, or communicate with us.
@@ -45,7 +45,7 @@ We collect information you provide directly to us when you create an account, pr
 We use cookies to enhance your experience, analyze usage, and personalize content. We may also display advertisements served by Google AdSense.
 
 ### Google DoubleClick DART Cookie
-Google is one of the third-party vendors on our site. It uses cookies, known as DART cookies, to serve ads to our site visitors based on their visit to PassAsistant and other sites on the internet. Visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL: https://policies.google.com/technologies/ads
+Google is one of the third-party vendors on our site. It uses cookies, known as DART cookies, to serve ads to our site visitors based on their visit to PassAssist and other sites on the internet. Visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL: https://policies.google.com/technologies/ads
 
 ## 3. Contact Us
 If you have any questions about this Privacy Policy, please contact us at support@prepai.com.`;
@@ -263,7 +263,7 @@ export function PrivacyPage() {
                       <span className="text-accent"> Policy</span>
                     </h1>
                     <p className="mt-2 text-muted-foreground text-base md:text-lg max-w-xl leading-relaxed">
-                      We care about your privacy. Learn how PassAsistant collects, uses, and protects your
+                      We care about your privacy. Learn how PassAssist collects, uses, and protects your
                       personal information.
                     </p>
                   </div>
@@ -353,19 +353,19 @@ export function PrivacyPage() {
         <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} PassAsistant. All rights reserved.
+              © {new Date().getFullYear()} PassAssist. All rights reserved.
             </div>
             <nav className="flex items-center gap-6 text-xs text-muted-foreground">
-              <Link to="/terms" as any className="hover:text-foreground transition-colors">
+              <Link to="/terms" className="hover:text-foreground transition-colors">
                 Terms of Service
               </Link>
-              <Link to="/about" as any className="hover:text-foreground transition-colors">
+              <Link to="/about" className="hover:text-foreground transition-colors">
                 About
               </Link>
-              <Link to="/contact" as any className="hover:text-foreground transition-colors">
+              <Link to="/contact" className="hover:text-foreground transition-colors">
                 Contact
               </Link>
-              <Link to="/portfolio" as any className="hover:text-foreground transition-colors">
+              <Link to="/portfolio" className="hover:text-foreground transition-colors">
                 Creator
               </Link>
             </nav>

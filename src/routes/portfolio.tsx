@@ -36,11 +36,11 @@ import {
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
     meta: [
-      { title: "Creator Portfolio — PassAsistant" },
+      { title: "Creator Portfolio — PassAssist" },
       {
         name: "description",
         content:
-          "Meet the creator and lead developer of PassAsistant English exam preparation platform. Background, skills, and vision.",
+          "Meet the creator and lead developer of PassAssist English exam preparation platform. Background, skills, and vision.",
       },
     ],
   }),
@@ -421,7 +421,7 @@ export function PortfolioPage() {
         <div className="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
             <span className="text-lg font-bold tracking-tight transition-colors group-hover:text-accent">
-              Pass<span className="text-accent">Asistant</span>
+              Pass<span className="text-accent">Assist</span>
             </span>
           </Link>
           <div className="flex items-center gap-1.5">
@@ -575,7 +575,7 @@ export function PortfolioPage() {
                 to="/"
                 className="text-lg font-bold tracking-tight inline-flex items-center gap-1.5"
               >
-                Pass<span className="text-accent">Asistant</span>
+                Pass<span className="text-accent">Assist</span>
               </Link>
               <p className="mt-1 text-xs text-muted-foreground max-w-xs leading-relaxed">
                 AI-powered English exam preparation — IELTS, TOEFL & TOEIC.
@@ -600,7 +600,7 @@ export function PortfolioPage() {
           </div>
 
           <div className="mt-6 pt-5 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-            <span>© {new Date().getFullYear()} PassAsistant. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} PassAssist. All rights reserved.</span>
             <span className="flex items-center gap-1.5">
               Built with <Sparkles className="size-3 text-accent" /> AI
             </span>
@@ -622,7 +622,7 @@ function ProfileColumn({ sections }: { sections: any[] }) {
     const links: {
       label: string;
       url: string;
-      type: "github" | "linkedin" | "email" | "generic";
+      type: "github" | "linkedin" | "email" | "facebook" | "instagram" | "telegram" | "whatsapp" | "generic";
     }[] = [];
 
     if (!profileSection) return { info, links };

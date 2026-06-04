@@ -15,8 +15,8 @@ interface ShareButtonProps {
 }
 
 export function ShareButton({
-  title = "PassAsistant",
-  description = "Check out this English prep resource on PassAsistant!",
+  title = "PassAssist",
+  description = "Check out this English prep resource on PassAssist!",
   path,
   className = "",
   variant = "outline",

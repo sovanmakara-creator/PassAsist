@@ -31,13 +31,13 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PassAsistant — IELTS, TOEFL & TOEIC prep with an AI tutor" },
+      { title: "PassAssist — IELTS, TOEFL & TOEIC prep with an AI tutor" },
       {
         name: "description",
         content:
           "Personalized English exam prep with real-time AI feedback on writing, speaking, reading and listening. Practice IELTS, TOEFL and TOEIC with an AI tutor.",
       },
-      { property: "og:title", content: "PassAsistant — AI English exam prep" },
+      { property: "og:title", content: "PassAssist — AI English exam prep" },
       {
         property: "og:description",
         content: "Score higher on IELTS, TOEFL and TOEIC with personalized AI coaching.",

@@ -27,7 +27,7 @@ export const Route = createFileRoute("/speaking")({
   validateSearch: (s) => SearchSchema.parse(s),
   head: () => ({
     meta: [
-      { title: "AI Speaking Tutor — PassAsistant" },
+      { title: "AI Speaking Tutor — PassAssist" },
       {
         name: "description",
         content:
@@ -222,7 +222,7 @@ export function SpeakingPage() {
           description="Practice speaking tasks with instant examiner-grade feedback on pronunciation, fluency, and grammar."
         >
           <ShareButton
-            title="AI Speaking Tutor — PassAsistant"
+            title="AI Speaking Tutor — PassAssist"
             description="Practice speaking and get instant examiner-grade feedback in real-time."
           />
         </PageHeader>

@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/exams/")({
   head: () => ({
     meta: [
-      { title: "Exams — PassAsistant" },
+      { title: "Exams — PassAssist" },
       {
         name: "description",
         content:

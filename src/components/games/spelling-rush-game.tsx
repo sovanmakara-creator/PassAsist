@@ -5,7 +5,7 @@ import { GameOverScreen, Confetti, RoundIndicator, GameTimer, GameHint } from ".
 import { useGameState } from "@/hooks/use-game-state";
 import { ArrowRight, Play, Zap } from "lucide-react";
 
-type Phase = "hunt" | "summary" | "rush";
+type Phase = "hunt" | "summary" | "rush" | "gameover";
 
 export function SpellingRushGame({
   words,
@@ -211,7 +211,7 @@ export function SpellingRushGame({
     }, 1500);
   };
 
-  if (phase === ("gameover" as any)) {
+  if (phase === "gameover") {
     return (
       <GameOverScreen
         title="Rush Complete! 🚀"

@@ -1,5 +1,28 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { callGeminiWithFallback } from "./gemini-helper";
+
+const DictionaryDefinitionSchema = z.object({
+  word: z.string(),
+  contextSentence: z.string(),
+});
+
+const QuestionClueSchema = z.object({
+  context: z.string(),
+  question: z.string(),
+});
+
+const AnswerExplanationSchema = z.object({
+  context: z.string(),
+  question: z.string(),
+  correctAnswer: z.string(),
+  userAnswer: z.string(),
+});
+
+const AdminAiHelperSchema = z.object({
+  prompt: z.string(),
+  context: z.string().optional(),
+});
 
 export const getGeminiLiveToken = createServerFn({ method: "GET" }).handler(async () => {
   const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
@@ -137,8 +160,9 @@ export const getDailyMiniTest = createServerFn({ method: "GET" }).handler(async 
   }[];
 });
 
-export const getDictionaryDefinition = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { word: string; contextSentence: string } }) => {
+export const getDictionaryDefinition = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => DictionaryDefinitionSchema.parse(input))
+  .handler(async ({ data }) => {
     const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
     if (!apiKey) throw new Error("AI is not configured");
 
@@ -201,8 +225,9 @@ export const getDictionaryDefinition = createServerFn({ method: "POST" }).handle
   },
 );
 
-export const getQuestionClue = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { context: string; question: string } }) => {
+export const getQuestionClue = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => QuestionClueSchema.parse(input))
+  .handler(async ({ data }) => {
     const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
     if (!apiKey) throw new Error("AI is not configured");
 
@@ -252,12 +277,9 @@ export const getQuestionClue = createServerFn({ method: "POST" }).handler(
   },
 );
 
-export const getAnswerExplanation = createServerFn({ method: "POST" }).handler(
-  async ({
-    data,
-  }: {
-    data: { context: string; question: string; correctAnswer: string; userAnswer: string };
-  }) => {
+export const getAnswerExplanation = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => AnswerExplanationSchema.parse(input))
+  .handler(async ({ data }) => {
     const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
     if (!apiKey) throw new Error("AI is not configured");
 
@@ -309,8 +331,9 @@ export const getAnswerExplanation = createServerFn({ method: "POST" }).handler(
   },
 );
 
-export const getAdminAiHelper = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { prompt: string; context?: string } }) => {
+export const getAdminAiHelper = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => AdminAiHelperSchema.parse(input))
+  .handler(async ({ data }) => {
     const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
     if (!apiKey) throw new Error("AI is not configured");
 
@@ -327,7 +350,7 @@ export const getAdminAiHelper = createServerFn({ method: "POST" }).handler(
       systemInstruction: {
         parts: [
           {
-            text: "You are an expert AI Assistant designed to help course administrators manage and create learning materials for PassAsistant (an English proficiency exam preparation platform for IELTS/TOEFL/TOEIC). You can help them write descriptions, outline course chapters, generate study questions, format documents, and organize resources. Be concise, practical, and highly helpful. Return a JSON object with a single 'response' string property containing your markdown-formatted response.",
+            text: "You are an expert AI Assistant designed to help course administrators manage and create learning materials for PassAssist (an English proficiency exam preparation platform for IELTS/TOEFL/TOEIC). You can help them write descriptions, outline course chapters, generate study questions, format documents, and organize resources. Be concise, practical, and highly helpful. Return a JSON object with a single 'response' string property containing your markdown-formatted response.",
           },
         ],
       },

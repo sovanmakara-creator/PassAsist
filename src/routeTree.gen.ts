@@ -13,6 +13,7 @@ import { Route as WritingRouteImport } from './routes/writing'
 import { Route as VocabularyRouteImport } from './routes/vocabulary'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SpeakingRouteImport } from './routes/speaking'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as HelpfulRouteImport } from './routes/helpful'
@@ -49,6 +50,11 @@ const TermsRoute = TermsRouteImport.update({
 const SpeakingRoute = SpeakingRouteImport.update({
   id: '/speaking',
   path: '/speaking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/helpful': typeof HelpfulRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/vocabulary': typeof VocabularyRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/helpful': typeof HelpfulRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/vocabulary': typeof VocabularyRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/helpful': typeof HelpfulRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/vocabulary': typeof VocabularyRoute
@@ -220,6 +229,7 @@ export interface FileRouteTypes {
     | '/helpful'
     | '/portfolio'
     | '/privacy'
+    | '/profile'
     | '/speaking'
     | '/terms'
     | '/vocabulary'
@@ -243,6 +253,7 @@ export interface FileRouteTypes {
     | '/helpful'
     | '/portfolio'
     | '/privacy'
+    | '/profile'
     | '/speaking'
     | '/terms'
     | '/vocabulary'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/helpful'
     | '/portfolio'
     | '/privacy'
+    | '/profile'
     | '/speaking'
     | '/terms'
     | '/vocabulary'
@@ -290,6 +302,7 @@ export interface RootRouteChildren {
   HelpfulRoute: typeof HelpfulRoute
   PortfolioRoute: typeof PortfolioRoute
   PrivacyRoute: typeof PrivacyRoute
+  ProfileRoute: typeof ProfileRoute
   SpeakingRoute: typeof SpeakingRoute
   TermsRoute: typeof TermsRoute
   VocabularyRoute: typeof VocabularyRoute
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       path: '/speaking'
       fullPath: '/speaking'
       preLoaderRoute: typeof SpeakingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -466,6 +486,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelpfulRoute: HelpfulRoute,
   PortfolioRoute: PortfolioRoute,
   PrivacyRoute: PrivacyRoute,
+  ProfileRoute: ProfileRoute,
   SpeakingRoute: SpeakingRoute,
   TermsRoute: TermsRoute,
   VocabularyRoute: VocabularyRoute,

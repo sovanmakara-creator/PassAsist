@@ -157,6 +157,140 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_roles: {
+        Row: {
+          id: string;
+          role: "admin" | "student";
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          role?: "admin" | "student";
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          role?: "admin" | "student";
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      resources: {
+        Row: {
+          id: string;
+          title: string;
+          description: string;
+          category: string;
+          difficulty: string | null;
+          url: string;
+          type: string;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          title: string;
+          description: string;
+          category: string;
+          difficulty?: string | null;
+          url: string;
+          type: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string;
+          category?: string;
+          difficulty?: string | null;
+          url?: string;
+          type?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      courses: {
+        Row: {
+          id: string;
+          resource_id: string | null;
+          title: string;
+          description: string;
+          pdf_url: string;
+          chapters_json: Json;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          resource_id?: string | null;
+          title: string;
+          description: string;
+          pdf_url: string;
+          chapters_json?: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          resource_id?: string | null;
+          title?: string;
+          description?: string;
+          pdf_url?: string;
+          chapters_json?: Json;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "courses_resource_id_fkey";
+            columns: ["resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      categories: {
+        Row: {
+          id: string;
+          name: string;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          name: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      site_pages: {
+        Row: {
+          id: string;
+          slug: string;
+          title: string;
+          content: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          title: string;
+          content: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          slug?: string;
+          title?: string;
+          content?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -293,3 +427,5 @@ export const Constants = {
     Enums: {},
   },
 } as const;
+
+export type WordData = Database["public"]["Tables"]["vocabulary_words"]["Row"];

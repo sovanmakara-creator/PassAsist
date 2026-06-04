@@ -1,17 +1,49 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { EnglishLexicon } from "english-lexicon";
 import { callGeminiWithFallback } from "./gemini-helper";
 
+const GetVocabularyWordsSchema = z.object({
+  exam: z.string(),
+  cefrLevel: z.string(),
+  count: z.number().optional(),
+  userId: z.string().optional(),
+});
+
+const ValidateWordSchema = z.object({
+  word: z.string(),
+});
+
+const GetUserProgressSchema = z.object({
+  userId: z.string(),
+  exam: z.string(),
+});
+
+const UpdateWordProgressSchema = z.object({
+  userId: z.string(),
+  wordId: z.string(),
+  exam: z.string(),
+  correct: z.boolean(),
+});
+
+const GetUserStatsSchema = z.object({
+  userId: z.string(),
+});
+
+const GetWritingPhrasesSchema = z.object({
+  exam: z.string(),
+  cefrLevel: z.string(),
+  count: z.number().optional(),
+  userId: z.string().optional(),
+});
+
 // ---------------------------------------------------------------------------
 // Generate exam-specific vocabulary words via Gemini and cache in Supabase
 // ---------------------------------------------------------------------------
-export const getVocabularyWords = createServerFn({ method: "POST" }).handler(
-  async ({
-    data,
-  }: {
-    data: { exam: string; cefrLevel: string; count?: number; userId?: string };
-  }) => {
+export const getVocabularyWords = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => GetVocabularyWordsSchema.parse(input))
+  .handler(async ({ data }) => {
     const { exam, cefrLevel, count = 10, userId } = data;
     const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
     if (!apiKey) throw new Error("AI is not configured");
@@ -188,8 +220,9 @@ export const getVocabularyWords = createServerFn({ method: "POST" }).handler(
 // ---------------------------------------------------------------------------
 // Brainstorm Game: Validate a word and return its CEFR level
 // ---------------------------------------------------------------------------
-export const validateWord = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { word: string } }) => {
+export const validateWord = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => ValidateWordSchema.parse(input))
+  .handler(async ({ data }) => {
     const { word } = data;
     const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
     if (!apiKey) throw new Error("AI is not configured");
@@ -263,8 +296,9 @@ export const validateWord = createServerFn({ method: "POST" }).handler(
 // ---------------------------------------------------------------------------
 // Brainstorm Game: Offline Validation (No API limits)
 // ---------------------------------------------------------------------------
-export const validateWordOffline = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { word: string } }) => {
+export const validateWordOffline = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => ValidateWordSchema.parse(input))
+  .handler(async ({ data }) => {
     const { word } = data;
     const cleanWord = word.trim().toLowerCase();
 
@@ -298,8 +332,9 @@ export const validateWordOffline = createServerFn({ method: "POST" }).handler(
 // ---------------------------------------------------------------------------
 // Get user's vocabulary progress for a specific exam
 // ---------------------------------------------------------------------------
-export const getUserProgress = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { userId: string; exam: string } }) => {
+export const getUserProgress = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => GetUserProgressSchema.parse(input))
+  .handler(async ({ data }) => {
     const { userId, exam } = data;
 
     const { data: progress, error } = await supabaseAdmin
@@ -321,12 +356,9 @@ export const getUserProgress = createServerFn({ method: "POST" }).handler(
 // ---------------------------------------------------------------------------
 // Update a word's progress using SM-2 spaced repetition
 // ---------------------------------------------------------------------------
-export const updateWordProgress = createServerFn({ method: "POST" }).handler(
-  async ({
-    data,
-  }: {
-    data: { userId: string; wordId: string; exam: string; correct: boolean };
-  }) => {
+export const updateWordProgress = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => UpdateWordProgressSchema.parse(input))
+  .handler(async ({ data }) => {
     const { userId, wordId, exam, correct } = data;
 
     // Fetch existing progress
@@ -402,8 +434,9 @@ export const updateWordProgress = createServerFn({ method: "POST" }).handler(
 // ---------------------------------------------------------------------------
 // Get aggregated user stats
 // ---------------------------------------------------------------------------
-export const getUserStats = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { userId: string } }) => {
+export const getUserStats = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => GetUserStatsSchema.parse(input))
+  .handler(async ({ data }) => {
     const { userId } = data;
 
     const { data: allProgress } = await supabaseAdmin
@@ -469,12 +502,9 @@ export const getUserStats = createServerFn({ method: "POST" }).handler(
 // Generate exam-specific popular writing phrases via Gemini and cache in Supabase
 // Uses part_of_speech = 'phrase' to distinguish from regular words
 // ---------------------------------------------------------------------------
-export const getWritingPhrases = createServerFn({ method: "POST" }).handler(
-  async ({
-    data,
-  }: {
-    data: { exam: string; cefrLevel: string; count?: number; userId?: string };
-  }) => {
+export const getWritingPhrases = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => GetWritingPhrasesSchema.parse(input))
+  .handler(async ({ data }) => {
     const { exam, cefrLevel, count = 10, userId } = data;
     const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
     if (!apiKey) throw new Error("AI is not configured");

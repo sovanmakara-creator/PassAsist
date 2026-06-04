@@ -17,7 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/helpful")({
   head: () => ({
     meta: [
-      { title: "Helpful Sources — PassAsistant" },
+      { title: "Helpful Sources — PassAssist" },
       {
         name: "description",
         content:

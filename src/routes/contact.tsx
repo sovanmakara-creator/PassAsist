@@ -23,11 +23,11 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — PassAsistant" },
+      { title: "Contact Us — PassAssist" },
       {
         name: "description",
         content:
-          "Get in touch with the PassAsistant team. We are here to help with your English exam preparation support.",
+          "Get in touch with the PassAssist team. We are here to help with your English exam preparation support.",
       },
     ],
   }),
@@ -167,7 +167,7 @@ export function ContactPage() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
             <span className="text-lg font-bold tracking-tight transition-colors group-hover:opacity-80">
-              Pass<span className="text-accent">Asistant</span>
+              Pass<span className="text-accent">Assist</span>
             </span>
           </Link>
           <div className="flex items-center gap-2">
@@ -417,7 +417,7 @@ export function ContactPage() {
         <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} PassAsistant. All rights reserved.
+              © {new Date().getFullYear()} PassAssist. All rights reserved.
             </div>
             <nav className="flex items-center gap-5 text-xs">
               <Link

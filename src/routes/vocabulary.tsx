@@ -559,7 +559,7 @@ function VocabularyPage() {
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
           <PageHeader title="Word Arena" description="Master your exam vocabulary through play.">
             <ShareButton
-              title="Word Arena — PassAsistant"
+              title="Word Arena — PassAssist"
               description="Master English exam vocabulary through fun gamified quizzes, matches, and brainstorms!"
             />
           </PageHeader>

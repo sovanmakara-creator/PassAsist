@@ -169,7 +169,7 @@ export function useGameState() {
   );
 
   // Wrong answer handler
-  const onWrongAnswer = useCallback(() => {
+  const onWrongAnswer = useCallback((_costHeart?: boolean) => {
     resetCombo();
   }, [resetCombo]);
 

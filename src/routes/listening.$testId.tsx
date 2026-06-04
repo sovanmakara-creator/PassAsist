@@ -245,7 +245,7 @@ function ListeningTestPage() {
               description="Play the audio track and answer the questions below."
             >
               <ShareButton
-                title={`${testData.title} — PassAsistant Listening`}
+                title={`${testData.title} — PassAssist Listening`}
                 description={testData.subtitle || "Practice listening comprehension with real-time AI assistance."}
               />
             </PageHeader>
