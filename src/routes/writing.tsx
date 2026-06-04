@@ -435,12 +435,9 @@ function WritingPage() {
                 </div>
               )}
 
-              <Textarea
-                value={task}
-                onChange={(e) => setTask(e.target.value)}
-                rows={taskImageUrl ? 4 : 6}
-                className="bg-surface border-border resize-none text-sm leading-relaxed"
-              />
+              <div className="bg-surface border border-border rounded-md px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap">
+                {task}
+              </div>
             </div>
 
             {recommendedWords.length > 0 && (
@@ -449,20 +446,15 @@ function WritingPage() {
                   <Sparkles className="size-4 text-accent" />
                   Recommended Vocabulary
                 </h3>
-                <p className="text-xs text-muted-foreground mb-3">
-                  Use these topic-related words or phrases in your response to achieve a higher band
-                  score:
-                </p>
-                <div className="grid sm:grid-cols-2 gap-2">
+                <div className="flex flex-wrap gap-2">
                   {recommendedWords.map((w, i) => (
                     <div
                       key={i}
-                      className="flex items-baseline gap-2 rounded-lg bg-accent/5 px-3 py-2 ring-1 ring-inset ring-accent/15"
+                      className="rounded-lg bg-accent/5 px-3 py-1.5 ring-1 ring-inset ring-accent/15 cursor-default group relative"
+                      title={w.hint}
                     >
-                      <span className="text-sm font-semibold text-accent whitespace-nowrap">
-                        {w.word}
-                      </span>
-                      <span className="text-xs text-muted-foreground">— {w.hint}</span>
+                      <span className="text-sm font-bold text-accent">{w.word}</span>
+                      <span className="text-xs text-muted-foreground ml-1.5">— {w.hint}</span>
                     </div>
                   ))}
                 </div>

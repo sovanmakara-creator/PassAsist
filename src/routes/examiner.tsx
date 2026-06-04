@@ -833,7 +833,7 @@ Keep your responses conversational, concise, and natural.`;
 
   return (
     <AppShell>
-      <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col h-[calc(100vh-80px)]">
+      <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col min-h-[calc(100vh-80px)]">
         <PageHeader
           title="Live AI Examiner"
           description="Have a real-time voice conversation with an AI examiner. Speak naturally."
@@ -844,9 +844,9 @@ Keep your responses conversational, concise, and natural.`;
           />
         </PageHeader>
 
-        <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0">
+        <div className="flex-1 flex flex-col lg:flex-row gap-6">
           {!isCallActive ? (
-            <div className="space-y-6 flex-1 overflow-y-auto pb-8 pr-1">
+            <div className="space-y-6 flex-1 pb-8">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                   <h3 className="font-semibold text-lg">Select a Speaking Topic</h3>
@@ -955,7 +955,7 @@ Keep your responses conversational, concise, and natural.`;
               </div>
             </div>
           ) : (
-            <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0">
+            <div className="flex-1 flex flex-col lg:flex-row gap-6">
               {/* Left Column: Prompt & Call Controls (only during active call) */}
               {!feedback && !isEvaluating ? (
                 <div className="flex-1 lg:max-w-md flex flex-col gap-6 shrink-0">
@@ -1097,7 +1097,7 @@ Keep your responses conversational, concise, and natural.`;
                 </div>
               ) : (
                 /* When feedback is shown, we stack the Active Prompt and Transcript inside a single vertical flex container */
-                <div className="flex-1 flex flex-col gap-6 min-h-0">
+                <div className="flex-1 flex flex-col gap-6">
                   {/* Active topic description on top */}
                   <div className="bg-card border border-border rounded-xl p-5 shadow-sm shrink-0 flex flex-col gap-2.5">
                     <div className="flex items-center justify-between">
@@ -1119,7 +1119,7 @@ Keep your responses conversational, concise, and natural.`;
                   </div>
 
                   {/* Transcript */}
-                  <div className="flex-1 flex flex-col min-h-[300px] bg-surface border border-border rounded-xl shadow-inner overflow-hidden">
+                  <div className="flex-1 flex flex-col min-h-[300px] bg-surface border border-border rounded-xl shadow-sm">
                     <div className="px-6 py-4 border-b border-border bg-muted/20 flex items-center justify-between">
                       <h3 className="font-semibold text-sm flex items-center gap-2">
                         <Mic className="size-4 text-primary animate-pulse" />
@@ -1127,7 +1127,7 @@ Keep your responses conversational, concise, and natural.`;
                       </h3>
                     </div>
                     
-                    <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-4">
+                    <div className="flex-1 p-6 flex flex-col gap-4">
                       {transcript.length === 0 && !currentModelText && (
                         <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground py-12">
                           <Volume2 className="size-12 mb-3 text-muted-foreground/40 animate-pulse" />
@@ -1165,7 +1165,7 @@ Keep your responses conversational, concise, and natural.`;
 
               {/* Right Side (during call): Live Transcript taking up the rest of the height */}
               {!feedback && !isEvaluating && (
-                <div className="flex-1 flex flex-col min-h-[300px] bg-surface border border-border rounded-xl shadow-inner overflow-hidden">
+                <div className="flex-1 flex flex-col min-h-[300px] bg-surface border border-border rounded-xl shadow-sm">
                   <div className="px-6 py-4 border-b border-border bg-muted/20 flex items-center justify-between">
                     <h3 className="font-semibold text-sm flex items-center gap-2">
                       <Mic className="size-4 text-primary animate-pulse" />
@@ -1177,7 +1177,7 @@ Keep your responses conversational, concise, and natural.`;
                     </span>
                   </div>
 
-                  <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-4">
+                  <div className="flex-1 p-6 flex flex-col gap-4">
                     {transcript.length === 0 && !currentModelText && (
                       <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground py-12">
                         <Volume2 className="size-12 mb-3 text-muted-foreground/40 animate-pulse" />
@@ -1217,7 +1217,7 @@ Keep your responses conversational, concise, and natural.`;
 
           {/* Right Column: AI Feedback Display */}
           {(feedback || isEvaluating) && (
-            <div className="lg:w-[450px] shrink-0 h-full overflow-y-auto pr-2 pb-6">
+            <div className="lg:w-[450px] shrink-0 pb-6">
               {isEvaluating && !feedback ? (
                 <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground">
                   <Loader2 className="size-10 animate-spin mb-4 text-accent" />

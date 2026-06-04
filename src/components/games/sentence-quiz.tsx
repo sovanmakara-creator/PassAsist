@@ -80,7 +80,6 @@ export function SentenceQuizGame({
     onResult(word.id, isCorrect);
 
     setTimeout(() => {
-      if (!isCorrect) return; // Dead
       setSelected(null);
       setEliminated([]);
       if (currentIndex < words.length - 1) {

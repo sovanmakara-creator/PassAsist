@@ -274,7 +274,6 @@ export function ScrambleGame({
   };
 
   const handleNext = () => {
-    if (!isCorrect) return;
     setInput("");
     setRevealed(false);
     setRevealedLetters(0);

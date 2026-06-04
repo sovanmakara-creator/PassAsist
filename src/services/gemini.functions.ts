@@ -33,15 +33,16 @@ export const getGeminiLiveToken = createServerFn({ method: "GET" }).handler(asyn
 });
 
 const ACADEMIC_WORDS = [
-  "aberration", "acquiesce", "alacrity", "amiable", "appease", "arcane", "assertive", "assiduous", "audacious", "austere",
-  "banal", "benevolent", "belligerent", "brazen", "cacophony", "candid", "capricious", "circumspect", "cogent", "collusion",
-  "complacency", "conundrum", "copious", "corroborate", "credulity", "cynical", "deferential", "deleterious", "demure", "deprecate",
-  "derisive", "despot", "diligent", "discordant", "disparate", "duplicity", "eclectic", "effrontery", "egregious", "elucidate",
-  "empirical", "enervate", "engender", "ephemeral", "equanimity", "equivocal", "esoteric", "euphemism", "exacerbate", "exemplary",
-  "facetious", "fallacious", "fastidious", "fortuitous", "frivolous", "garrulous", "gregarious", "harangue", "haughty", "hegemony",
-  "imminent", "immutable", "impetuous", "implacable", "inchoate", "indolent", "inexorable", "inimical", "innocuous", "inscrutable",
-  "insidious", "intrepid", "inveterate", "juxtapose", "laconic", "languid", "loquacious", "lucid", "magnanimous", "maverick",
-  "meticulous", "mitigate", "modicum", "morose", "mundane", "nefarious", "obdurate", "obfuscate", "obsequious", "obstinate",
+  "abate", "aberrant", "abstract", "accolade", "acquiesce", "adversity", "ambiguous", "ameliorate", "analogous", "anomaly",
+  "antipathy", "arbitrary", "articulate", "ascertain", "assiduous", "augment", "auspicious", "benevolent", "brevity", "candor",
+  "capitulate", "capricious", "cogent", "commensurate", "compelling", "conducive", "contemplate", "contentious", "convoluted", "cursory",
+  "debilitate", "deference", "delineate", "deter", "dichotomy", "diffidence", "digress", "discern", "disparate", "disseminate",
+  "dogmatic", "dubious", "ebullient", "efficacy", "egregious", "elicit", "elucidate", "emanate", "embellish", "empirical",
+  "encompass", "engender", "enigmatic", "ephemeral", "equivocal", "esoteric", "exacerbate", "exemplify", "exonerate", "expedite",
+  "facilitate", "fallacious", "fortuitous", "frivolous", "garrulous", "gratuitous", "hackneyed", "hypothetical", "idiosyncratic", "immutable",
+  "impede", "impertinent", "impervious", "impetus", "implicit", "inadvertent", "incongruous", "indifferent", "ineffable", "inherent",
+  "innocuous", "innuendo", "insipid", "intransigent", "inundate", "irrefutable", "juxtapose", "languid", "laud", "lucid",
+  "magnanimous", "mitigate", "nefarious", "nonchalant", "obfuscate", "oblique", "obsolete", "obstinate", "obtuse", "officious",
   "officious", "onerous", "ostentatious", "paradigm", "pariah", "paucity", "pejorative", "penchant", "perfidious", "perfunctory",
   "pernicious", "perspicacious", "pervasive", "plausible", "pragmatic", "precipitous", "predilection", "proclivity", "prodigious", "prosaic"
 ];

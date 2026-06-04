@@ -82,7 +82,6 @@ export function GuessWordGame({
   };
 
   const handleNext = () => {
-    if (!isCorrect) return;
     setInput("");
     setRevealed(false);
     setHintsUsed(0);

@@ -457,7 +457,7 @@ export const fetchNewTopic = createServerFn({ method: "POST" })
               {
                 role: "system",
                 content:
-                  "You must return ONLY a raw JSON array of 15 objects with 'word' and 'hint' string properties. Provide highly practical, frequently used words that are extremely useful for writing an essay on this specific topic. Mix: 5 essential topic-specific vocabulary words, 5 natural linking phrases, and 5 common academic collocations. Avoid overly advanced, obscure, or rarely used words. Do NOT use markdown code blocks like ```json.",
+                  "You must return ONLY a raw JSON array of 10 objects with 'word' and 'hint' string properties. Provide highly practical, frequently used words that are extremely useful for writing an essay on this specific topic. Mix: 4 essential topic-specific vocabulary words, 3 natural linking phrases, and 3 common academic collocations. Avoid overly advanced or obscure words. The 'hint' MUST be extremely short, simple, and easy to understand (max 4-6 words), followed by a synonym in parentheses. Example hint: 'cause damage (synonym: harm)'. Do NOT use markdown code blocks like ```json.",
               },
               { role: "user", content: `Topic: ${questionForVocab}` },
             ],

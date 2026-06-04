@@ -38,42 +38,33 @@ const DEFAULT_CONTENT = `# Contact Us
 
 Have questions, feedback, or need assistance? We are here to help!
 
-### Get in Touch
-- **Support Email**: support@prepai.com
-- **Office Hours**: Monday – Friday, 9:00 AM – 5:00 PM EST
+### Contact Details
+- **Email**: support@prepai.com
+- **Phone**: +1 (800) 555-0199
+- **Office Hours**: 9:00 AM – 5:00 PM EST
+- **Location**: San Francisco, CA
+
+### Email Integration (Web3Forms)
+To make the contact form work, get a free Access Key from [Web3Forms](https://web3forms.com) and paste it below:
+- **Web3Forms Key**: YOUR_ACCESS_KEY_HERE
 
 ### Guidelines
 For account support or bugs, please include your email address and a screenshot of the issue for a faster response.`;
 
-/* ------------------------------------------------------------------ */
-/*  Contact info cards data                                           */
-/* ------------------------------------------------------------------ */
-const CONTACT_CARDS = [
-  {
-    icon: Mail,
-    label: "Email Us",
-    value: "support@prepai.com",
-    sub: "We reply within 24 hours",
-  },
-  {
-    icon: Phone,
-    label: "Call Us",
-    value: "+1 (800) 555-0199",
-    sub: "Mon–Fri, 9 AM – 5 PM EST",
-  },
-  {
-    icon: Clock,
-    label: "Office Hours",
-    value: "9:00 AM – 5:00 PM",
-    sub: "Eastern Standard Time",
-  },
-  {
-    icon: MapPin,
-    label: "Location",
-    value: "San Francisco, CA",
-    sub: "United States",
-  },
-];
+function extractContactDetails(markdown: string) {
+  const getMatch = (regex: RegExp) => {
+    const match = markdown.match(regex);
+    return match ? match[1].trim() : "";
+  };
+
+  return {
+    email: getMatch(/-\s*\*\*.*?Email\*\*:\s*(.+)/i) || "support@prepai.com",
+    phone: getMatch(/-\s*\*\*.*?Phone\*\*:\s*(.+)/i) || "+1 (800) 555-0199",
+    hours: getMatch(/-\s*\*\*.*?Hours\*\*:\s*(.+)/i) || "9:00 AM – 5:00 PM EST",
+    location: getMatch(/-\s*\*\*.*?Location\*\*:\s*(.+)/i) || "San Francisco, CA",
+    web3formsKey: getMatch(/-\s*\*\*.*?Web3Forms Key\*\*:\s*(.+)/i),
+  };
+}
 
 /* ------------------------------------------------------------------ */
 /*  FAQ data                                                          */
@@ -138,23 +129,80 @@ export function ContactPage() {
     loadPage();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const details = extractContactDetails(content);
+
+  const contactCards = [
+    {
+      icon: Mail,
+      label: "Email Us",
+      value: details.email,
+      sub: "We reply within 24 hours",
+    },
+    {
+      icon: Phone,
+      label: "Call Us",
+      value: details.phone,
+      sub: "Mon–Fri",
+    },
+    {
+      icon: Clock,
+      label: "Office Hours",
+      value: details.hours,
+      sub: "Eastern Standard Time",
+    },
+    {
+      icon: MapPin,
+      label: "Location",
+      value: details.location,
+      sub: "Headquarters",
+    },
+  ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !subject || !message) {
       toast.error("Please fill in all fields.");
       return;
     }
 
+    if (!details.web3formsKey || details.web3formsKey === "YOUR_ACCESS_KEY_HERE") {
+      toast.error("Form is not connected to an email service. Please add your Web3Forms Key in the Admin Panel.");
+      return;
+    }
+
     setIsSubmitting(true);
-    // Simulate sending message
-    setTimeout(() => {
+    
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: details.web3formsKey,
+          name,
+          email,
+          subject,
+          message,
+        }),
+      });
+      
+      const result = await response.json();
+      if (response.status === 200) {
+        toast.success("Message sent successfully! We will get back to you shortly.");
+        setName("");
+        setEmail("");
+        setSubject("");
+        setMessage("");
+      } else {
+        toast.error(result.message || "Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      toast.error("An error occurred while sending the message.");
+    } finally {
       setIsSubmitting(false);
-      toast.success("Message sent successfully! We will get back to you shortly.");
-      setName("");
-      setEmail("");
-      setSubject("");
-      setMessage("");
-    }, 1500);
+    }
   };
 
   /* ---------------------------------------------------------------- */
@@ -243,7 +291,7 @@ export function ContactPage() {
           <>
             {/* ── Contact Info Cards ── */}
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 -mt-8 md:-mt-10 relative z-10 animate-[fadeInUp_0.7s_ease_both]">
-              {CONTACT_CARDS.map(({ icon: Icon, label, value, sub }) => (
+              {contactCards.map(({ icon: Icon, label, value, sub }) => (
                 <div
                   key={label}
                   className="group rounded-2xl border border-border bg-card/80 backdrop-blur-md p-5 shadow-sm hover:shadow-lg hover:border-accent/40 transition-all duration-300 hover:-translate-y-0.5"

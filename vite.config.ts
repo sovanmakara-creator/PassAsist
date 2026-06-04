@@ -8,6 +8,11 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import netlify from "@netlify/vite-plugin-tanstack-start";
 
 export default defineConfig({
+  vite: {
+    server: {
+      port: 8080,
+    },
+  },
   cloudflare: false,
   plugins: [netlify()],
 });
