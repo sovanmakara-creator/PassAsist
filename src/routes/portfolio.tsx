@@ -56,6 +56,7 @@ Welcome! My name is Sovanmakara (Janric), a 20-year-old software engineering stu
 ## Profile
 - **Name**: Sovanmakara Pov (Janric)
 - **Role**: Software Engineering Student & Developer
+- **Avatar**: https://github.com/sovanmakara-creator.png
 - **Socials**: [Facebook: Sovanmkara POV](https://facebook.com) | [Instagram: @janric_sp](https://instagram.com/janric_sp) | [Telegram](https://t.me/+855887821790) | [WhatsApp](https://wa.me/855887821790)
 
 ## Background
@@ -285,9 +286,15 @@ export function PortfolioPage() {
         } else {
           const localContent = localStorage.getItem("prepai_page_content_portfolio");
           const localTitle = localStorage.getItem("prepai_page_title_portfolio");
-          if (localContent) {
+          if (localContent && localContent.includes("Avatar")) {
             setContent(localContent);
             setTitle(localTitle || "Creator Portfolio");
+          } else {
+            // Force reload with the new default content that includes the avatar
+            setContent(DEFAULT_CONTENT);
+            setTitle("Creator Portfolio");
+            localStorage.setItem("prepai_page_content_portfolio", DEFAULT_CONTENT);
+            localStorage.setItem("prepai_page_title_portfolio", "Creator Portfolio");
           }
         }
       } catch (err) {

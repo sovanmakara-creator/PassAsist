@@ -196,7 +196,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => setShowSignOutConfirm(true)} 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowSignOutConfirm(true);
+              }} 
               className={`justify-start text-destructive hover:text-destructive hover:bg-destructive/10 rounded-xl ${collapsed ? "justify-center px-0" : ""}`}
             >
               <LogOut className={`size-4 ${collapsed ? "" : "mr-2"}`} />
@@ -326,7 +329,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Button 
                     variant="destructive" 
                     size="lg" 
-                    onClick={() => { setShowSignOutConfirm(true); setShowMore(false); }} 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowMore(false);
+                      setTimeout(() => {
+                        setShowSignOutConfirm(true);
+                      }, 50);
+                    }} 
                     className="w-full justify-start rounded-xl h-11"
                   >
                     <LogOut className="size-4 mr-3" />
