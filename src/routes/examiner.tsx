@@ -126,7 +126,7 @@ export function ExaminerPage() {
   }, [isSpeaking]);
 
   const [isWaitingForModel, setIsWaitingForModel] = useState(false);
-
+  const [showDebugConsole, setShowDebugConsole] = useState(false);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
   const addDebugLog = (msg: string) => {
     const time = new Date().toLocaleTimeString();
@@ -320,7 +320,11 @@ export function ExaminerPage() {
       const promptText = topicRes.task;
       setActiveTopicPrompt(promptText);
 
-      const { apiKey } = await getGeminiLiveToken();
+      const tokenRes = await getGeminiLiveToken();
+      if (!tokenRes.success || !tokenRes.apiKey) {
+        throw new Error(tokenRes.error || "GEMINI_API_KEY is missing. Please check your Netlify environment variables.");
+      }
+      const apiKey = tokenRes.apiKey;
 
       const SpeechRecognition =
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -687,6 +691,8 @@ Keep your responses conversational, concise, and natural.`;
         disconnect();
       };
     } catch (e: any) {
+      console.error("[Gemini Live Error]", e);
+      addDebugLog(`Error starting session: ${e.message || e}`);
       toast.error(e.message || "Failed to start interview.");
       disconnect();
     }
@@ -1338,6 +1344,59 @@ Keep your responses conversational, concise, and natural.`;
                   </div>
                 </div>
               ) : null}
+            </div>
+          )}
+        </div>
+
+        {/* Connection Diagnostics Console */}
+        <div className="mt-8 border border-border rounded-xl bg-card overflow-hidden shadow-sm">
+          <div 
+            onClick={() => setShowDebugConsole(!showDebugConsole)}
+            className="flex items-center justify-between px-5 py-3.5 bg-muted/30 border-b border-border cursor-pointer hover:bg-muted/50 transition-colors"
+          >
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <AlertCircle className="size-4 text-muted-foreground" />
+              Connection Diagnostics & Troubleshooting
+            </div>
+            <span className="text-xs text-accent font-medium">
+              {showDebugConsole ? "Hide Diagnostics" : "Show Diagnostics"}
+            </span>
+          </div>
+          {showDebugConsole && (
+            <div className="p-5 space-y-4 text-sm bg-surface animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <h4 className="font-semibold text-xs uppercase tracking-wider text-foreground mb-2">Troubleshooting Steps</h4>
+                  <ul className="list-disc pl-4 space-y-1.5 text-xs text-muted-foreground">
+                    <li>
+                      <strong>Microphone Permissions:</strong> Verify that your browser has permission to access your microphone. Look for a camera/mic icon in the browser address bar.
+                    </li>
+                    <li>
+                      <strong>API Key Configuration:</strong> The Live Examiner requires the <code>GEMINI_API_KEY</code> environment variable to be configured in your Netlify Dashboard (under <em>Site Configuration &gt; Environment Variables</em>).
+                    </li>
+                    <li>
+                      <strong>HTTPS Required:</strong> Bidirectional media requires a secure context. Make sure you are accessing the site via <code>https://</code> or <code>localhost</code>.
+                    </li>
+                    <li>
+                      <strong>Check Live API:</strong> The connection uses Gemini Live WebSocket API (<code>wss://generativelanguage.googleapis.com</code>). If your network blocks WebSocket traffic, it will not connect.
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-xs uppercase tracking-wider text-foreground mb-2">Internal Debug Logs</h4>
+                  <div className="h-40 rounded-lg border border-border bg-muted/40 p-3 overflow-y-auto font-mono text-[10px] leading-relaxed text-muted-foreground space-y-1">
+                    {debugLogs.length === 0 ? (
+                      <span className="italic text-muted-foreground/60">No logs generated yet. Start a session to view diagnostics.</span>
+                    ) : (
+                      debugLogs.map((log, index) => (
+                        <div key={index} className="border-b border-muted-foreground/5 pb-1">
+                          {log}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

@@ -27,9 +27,9 @@ const AdminAiHelperSchema = z.object({
 export const getGeminiLiveToken = createServerFn({ method: "GET" }).handler(async () => {
   const apiKey = process.env.GEMINI_API_KEY?.replace(/"/g, "")?.trim();
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY is missing from environment variables.");
+    return { success: false as const, error: "GEMINI_API_KEY is missing from environment variables." };
   }
-  return { apiKey };
+  return { success: true as const, apiKey };
 });
 
 const ACADEMIC_WORDS = [
