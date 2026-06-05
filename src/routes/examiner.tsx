@@ -5,6 +5,7 @@ import { ShareButton } from "@/components/share-button";
 import { Button } from "@/components/ui/button";
 import { getGeminiLiveToken } from "@/services/gemini.functions";
 import { fetchSpeakingTopic, analyzeSpeaking, fetchTopicList } from "@/services/speaking.functions";
+import { progressTracker } from "@/services/progress-tracker";
 import { toast } from "sonner";
 import {
   Mic,
@@ -807,6 +808,10 @@ Keep your responses conversational, concise, and natural.`;
         },
       });
       setFeedback(fb);
+      const evalTask = part === "full_mock"
+        ? `Live Full Mock Test: ${activeTopicPrompt}`
+        : `Live Interview (${part}): ${activeTopicPrompt}`;
+      progressTracker.saveSpeakingScore(examType, evalTask, fb.band_score, fb);
       toast.success("Evaluation complete!");
     } catch (e: any) {
       console.error(e);

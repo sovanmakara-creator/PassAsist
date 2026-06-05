@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { analyzeWriting, fetchNewTopic } from "@/services/writing.functions";
+import { progressTracker } from "@/services/progress-tracker";
 import { toast } from "sonner";
 import {
   Sparkles,
@@ -327,6 +328,7 @@ function WritingPage() {
     try {
       const res = await analyzeWriting({ data: { exam, task, essay } });
       setFeedback(res);
+      progressTracker.saveWritingScore(exam, task, essay, res.band_score, res);
       toast.success("Feedback ready");
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Something went wrong";

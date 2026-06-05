@@ -19,6 +19,7 @@ import {
   Briefcase,
   Check,
   ChevronRight,
+  Brain,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -26,6 +27,8 @@ import { getWordOfTheDay, getDailyMiniTest } from "@/services/gemini.functions";
 import { getDashboardStats } from "@/services/dashboard.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { progressTracker } from "@/services/progress-tracker";
+import { DashboardInsights } from "@/components/dashboard-insights";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -177,6 +180,7 @@ function Dashboard() {
     days: [false, false, false, false, false, false, false],
   });
   const [statsLoading, setStatsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"overview" | "insights">("overview");
 
   // Load Word of the Day with local cache and automatic midnight update
   useEffect(() => {
@@ -243,16 +247,105 @@ function Dashboard() {
     };
   }, []);
 
-  // Load dashboard stats (skill scores + streak) from Supabase
+  // Load dashboard stats (skill scores + streak) from Supabase and merge with localStorage
   useEffect(() => {
     let active = true;
     const fetchStats = async () => {
       try {
         const stats = await getDashboardStats();
-        if (active) {
-          setSkillScores(stats.skills);
-          setStreakData(stats.streak);
+        if (!active) return;
+
+        // Load localStorage data
+        const lScores = progressTracker.getListeningScores();
+        const rScores = progressTracker.getReadingScores();
+        const wScores = progressTracker.getWritingScores();
+        const sScores = progressTracker.getSpeakingScores();
+
+        // Calculate Listening & Reading averages
+        let listeningScore: number | null = stats.skills.listening;
+        if (lScores.length > 0) {
+          const sum = lScores.reduce((acc, curr) => acc + (curr.score / curr.total) * 100, 0);
+          listeningScore = Math.round(sum / lScores.length);
         }
+
+        let readingScore: number | null = stats.skills.reading;
+        if (rScores.length > 0) {
+          const sum = rScores.reduce((acc, curr) => acc + (curr.score / curr.total) * 100, 0);
+          readingScore = Math.round(sum / rScores.length);
+        }
+
+        // Calculate Writing latest score
+        let writingScore: number | null = stats.skills.writing;
+        if (wScores.length > 0) {
+          const latest = wScores[wScores.length - 1];
+          const bandScore = latest.bandScore;
+          const examType = latest.exam;
+          if (examType.includes("ielts")) {
+            writingScore = Math.round((bandScore / 9) * 100);
+          } else if (examType.includes("toefl")) {
+            writingScore = Math.round((bandScore / 30) * 100);
+          } else {
+            writingScore = Math.round((bandScore / 200) * 100);
+          }
+        }
+
+        // Calculate Speaking latest score
+        let speakingScore: number | null = stats.skills.speaking;
+        if (sScores.length > 0) {
+          const latest = sScores[sScores.length - 1];
+          const bandScore = latest.bandScore;
+          const examType = latest.exam;
+          if (examType.includes("ielts")) {
+            speakingScore = Math.round((bandScore / 9) * 100);
+          } else if (examType.includes("toefl")) {
+            speakingScore = Math.round((bandScore / 30) * 100);
+          } else {
+            speakingScore = Math.round((bandScore / 200) * 100);
+          }
+        }
+
+        setSkillScores({
+          listening: listeningScore,
+          reading: readingScore,
+          writing: writingScore,
+          speaking: speakingScore,
+        });
+
+        // Determine streak count: merge server evaluation days with client-side activity days
+        const serverDays = [...stats.streak.days];
+        const now = new Date();
+        const dayOfWeek = now.getDay();
+        const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        const monday = new Date(now);
+        monday.setDate(now.getDate() + mondayOffset);
+        monday.setHours(0, 0, 0, 0);
+
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+        sunday.setHours(23, 59, 59, 999);
+
+        const allClientActivities = [
+          ...lScores.map((x) => x.date),
+          ...rScores.map((x) => x.date),
+          ...wScores.map((x) => x.date),
+          ...sScores.map((x) => x.date),
+        ];
+
+        allClientActivities.forEach((dateStr) => {
+          const d = new Date(dateStr);
+          if (d >= monday && d <= sunday) {
+            const dow = d.getDay();
+            const idx = dow === 0 ? 6 : dow - 1;
+            serverDays[idx] = true;
+          }
+        });
+
+        const streakCount = serverDays.filter(Boolean).length;
+        setStreakData({
+          count: streakCount,
+          days: serverDays,
+        });
+
       } catch (err) {
         console.error("Failed to load dashboard stats:", err);
       } finally {
@@ -334,8 +427,34 @@ function Dashboard() {
           description="Here is where you stand today. Resume practice to lock in your targets."
         />
 
-        {/* Bento Grid Container */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Pill Tab Selector */}
+        <div className="flex gap-2 p-1 bg-muted/40 border border-border/60 rounded-2xl w-fit mb-8 shadow-inner">
+          <button
+            onClick={() => setActiveTab("overview")}
+            className={`px-5 py-2 text-xs font-extrabold uppercase tracking-wider rounded-xl transition-all cursor-pointer ${
+              activeTab === "overview"
+                ? "bg-background text-foreground shadow border border-border/80"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Overview
+          </button>
+          <button
+            onClick={() => setActiveTab("insights")}
+            className={`px-5 py-2 text-xs font-extrabold uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+              activeTab === "insights"
+                ? "bg-background text-foreground shadow border border-border/80"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Brain className="size-3.5 text-accent animate-pulse" />
+            AI Insights & Progress
+          </button>
+        </div>
+
+        {activeTab === "overview" ? (
+          <>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 1. AI Tutor glass card (lg:col-span-2) */}
           <div className="lg:col-span-2 rounded-3xl border border-border/80 bg-card p-6 md:p-8 hover-glow shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[220px]">
             {/* Ambient background glow inside the card */}
@@ -790,6 +909,10 @@ function Dashboard() {
             })}
           </div>
         </section>
+          </>
+        ) : (
+          <DashboardInsights />
+        )}
       </div>
     </AppShell>
   );

@@ -29,6 +29,7 @@ import {
   getAnswerExplanation,
 } from "@/services/gemini.functions";
 import { READING_TESTS } from "@/services/reading-data";
+import { progressTracker } from "@/services/progress-tracker";
 import { z } from "zod";
 import { ShareButton } from "@/components/share-button";
 
@@ -202,6 +203,7 @@ function ReadingTestPage() {
     });
     setScore(currentScore);
     setSubmitted(true);
+    progressTracker.saveReadingScore(testId, currentScore, Object.keys(testData.answers).length);
     toast.success(`You scored ${currentScore} out of ${Object.keys(testData.answers).length}`);
   };
 

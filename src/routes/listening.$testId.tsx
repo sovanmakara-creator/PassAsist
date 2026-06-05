@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { LISTENING_TESTS } from "@/services/listening-data";
+import { progressTracker } from "@/services/progress-tracker";
 import { getQuestionClue, getAnswerExplanation } from "@/services/gemini.functions";
 import { z } from "zod";
 import { ShareButton } from "@/components/share-button";
@@ -103,6 +104,7 @@ function ListeningTestPage() {
     });
     setScore(currentScore);
     setSubmitted(true);
+    progressTracker.saveListeningScore(testId, currentScore, Object.keys(testData.answers).length);
     toast.success(`You scored ${currentScore} out of ${Object.keys(testData.answers).length}`);
   };
 

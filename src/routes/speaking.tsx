@@ -5,6 +5,7 @@ import { ShareButton } from "@/components/share-button";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { analyzeSpeaking, fetchSpeakingTopic } from "@/services/speaking.functions";
+import { progressTracker } from "@/services/progress-tracker";
 import { toast } from "sonner";
 import {
   Sparkles,
@@ -205,6 +206,7 @@ export function SpeakingPage() {
         },
       });
       setFeedback(fb);
+      progressTracker.saveSpeakingScore(exam, taskText, fb.band_score, fb);
       toast.success("Evaluation complete!");
     } catch (e: any) {
       console.error("Evaluation error:", e);
