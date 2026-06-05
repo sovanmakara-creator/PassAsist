@@ -140,6 +140,7 @@ const DAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 
 // Global reference to prevent Chrome garbage collection bug with SpeechSynthesis
 let currentUtterance: SpeechSynthesisUtterance | null = null;
+let wordOfTheDayPromise: Promise<any> | null = null;
 
 function Dashboard() {
   const { user } = useAuth();
@@ -219,7 +220,10 @@ function Dashboard() {
 
     const fetchWordDirect = async () => {
       try {
-        const data = await getWordOfTheDay();
+        if (!wordOfTheDayPromise) {
+          wordOfTheDayPromise = getWordOfTheDay();
+        }
+        const data = await wordOfTheDayPromise;
         setWordData(data);
         localStorage.setItem("word_of_the_day", JSON.stringify(data));
         setWordLoading(false);
@@ -235,6 +239,8 @@ function Dashboard() {
       } catch (err) {
         console.error("Failed to fetch Word of the Day directly:", err);
         setWordLoading(false);
+      } finally {
+        wordOfTheDayPromise = null;
       }
     };
 

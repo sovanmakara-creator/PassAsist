@@ -16,7 +16,8 @@ export async function callGeminiWithFallback({
   // Define fallback sequence
   const modelsToTry = [
     model,
-    model === "gemini-flash-latest" ? "gemini-3.5-flash" : "gemini-3.5-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-3.5-flash",
     "gemini-3.1-flash-lite",
   ];
 
