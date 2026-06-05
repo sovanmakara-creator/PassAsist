@@ -1104,6 +1104,14 @@ Keep your responses conversational, concise, and natural.`;
                         </div>
                       </div>
                     )}
+
+                    {status === "idle" && totalSeconds === 0 && (
+                      <div className="flex flex-col items-center justify-center py-4 text-center text-muted-foreground animate-in fade-in duration-300">
+                        <AlertCircle className="size-6 text-muted-foreground/60 mb-1" />
+                        <span className="text-xs font-semibold text-foreground/80">Connection Inactive</span>
+                        <span className="text-[10px] mt-0.5 text-muted-foreground/70">Failed to connect to the AI Examiner.</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -1182,15 +1190,52 @@ Keep your responses conversational, concise, and natural.`;
                       <Mic className="size-4 text-primary animate-pulse" />
                       Live Speaking Session
                     </h3>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                      <span className="size-1.5 bg-emerald-500 rounded-full animate-ping"></span>
-                      Voice Connected
-                    </span>
+                    {status === "connected" ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 animate-in fade-in duration-300">
+                        <span className="size-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                        Voice Connected
+                      </span>
+                    ) : status === "connecting" ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse">
+                        <Loader2 className="size-3 animate-spin" />
+                        Connecting...
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground border border-border">
+                        Disconnected
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex-1 p-6 flex flex-col gap-4">
-                    {transcript.length === 0 && !currentModelText && (
-                      <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground py-12">
+                    {status === "idle" && transcript.length === 0 && !currentModelText && (
+                      <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground py-12 animate-in fade-in duration-300">
+                        <AlertCircle className="size-12 mb-3 text-destructive animate-bounce" />
+                        <p className="text-sm font-semibold text-foreground">Connection Failed or Closed</p>
+                        <p className="text-xs text-muted-foreground/75 mt-1 text-center max-w-sm">
+                          Could not establish a connection to the Live AI Examiner service. Please check your internet connection and API key configuration.
+                        </p>
+                        <div className="mt-5 flex gap-3">
+                          <Button onClick={() => connect()} size="sm" variant="default" className="cursor-pointer">
+                            Try Again
+                          </Button>
+                          <Button onClick={handleBackToTopics} size="sm" variant="outline" className="cursor-pointer">
+                            Back to Topics
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {status === "connecting" && (
+                      <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground py-12 animate-in fade-in duration-300">
+                        <Loader2 className="size-12 mb-3 text-accent animate-spin" />
+                        <p className="text-sm font-medium">Connecting to Gemini Live API...</p>
+                        <p className="text-xs text-muted-foreground/75 mt-1 text-center">Establishing secure audio and data channel.</p>
+                      </div>
+                    )}
+
+                    {status === "connected" && transcript.length === 0 && !currentModelText && (
+                      <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground py-12 animate-in fade-in duration-300">
                         <Volume2 className="size-12 mb-3 text-muted-foreground/40 animate-pulse" />
                         <p className="text-sm font-medium">The examiner is initiating the session...</p>
                         <p className="text-xs text-muted-foreground/75 mt-1">Speak clearly into your microphone when ready.</p>
