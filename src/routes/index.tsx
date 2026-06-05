@@ -89,72 +89,38 @@ function Landing() {
           <div className="absolute top-1/4 left-[10%] w-96 h-96 bg-accent/8 blur-[100px] rounded-full animate-float" />
           <div className="absolute bottom-1/4 right-[10%] w-96 h-96 bg-violet-500/8 blur-[120px] rounded-full animate-float stagger-3" />
 
-          <div className="max-w-6xl mx-auto px-6 relative z-10 grid lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7 flex flex-col items-start animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 backdrop-blur-md px-3.5 py-1 text-xs font-semibold text-accent mb-6 shadow-sm">
-                <Sparkles className="size-3.5 text-accent animate-pulse" />
-                AI-Powered English Exam Prep Platform
-              </div>
-              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight max-w-4xl leading-[1.05] font-heading">
-                Score higher. With a tutor that{" "}
-                <span className="bg-gradient-to-r from-accent via-violet-500 to-indigo-500 bg-clip-text text-transparent animate-text-gradient bg-[length:200%_auto]">
-                  learns you
-                </span>
-                .
-              </h1>
-              <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                Practice writing, speaking, reading, and listening with instant, examiner-grade AI
-                feedback. Personalized study plans, daily drills, and full-length mock exams.
-              </p>
-              
-              {/* Trust Badge */}
-              <div className="mt-6 flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted/30 py-1.5 px-3 rounded-full border border-border/40">
-                <Users className="size-3.5 text-accent" />
-                <span>Join <span className="text-foreground font-bold">12,000+</span> learners scoring higher this week</span>
-              </div>
-
-              <div className="mt-8 flex flex-wrap gap-4">
-                <Button size="lg" className="rounded-xl bg-accent hover:bg-accent/90 shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:scale-[1.02] transition-all" asChild>
-                  <Link to="/auth">
-                    Start Free Prep <ArrowRight className="ml-2 size-4" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="rounded-xl hover:bg-muted/50 transition-colors" asChild>
-                  <Link to="/writing">Try Writing Tutor</Link>
-                </Button>
-              </div>
+          <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col items-center text-center animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 backdrop-blur-md px-3.5 py-1 text-xs font-semibold text-accent mb-6 shadow-sm">
+              <Sparkles className="size-3.5 text-accent animate-pulse" />
+              AI-Powered English Exam Prep Platform
+            </div>
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05] font-heading">
+              Score higher. With a tutor that{" "}
+              <span className="bg-gradient-to-r from-accent via-violet-500 to-indigo-500 bg-clip-text text-transparent animate-text-gradient bg-[length:200%_auto]">
+                learns you
+              </span>
+              .
+            </h1>
+            <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed mx-auto">
+              Practice writing, speaking, reading, and listening with instant, examiner-grade AI
+              feedback. Personalized study plans, daily drills, and full-length mock exams.
+            </p>
+            
+            {/* Trust Badge */}
+            <div className="mt-6 flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted/30 py-1.5 px-3 rounded-full border border-border/40 justify-center">
+              <Users className="size-3.5 text-accent" />
+              <span>Join <span className="text-foreground font-bold">12,000+</span> learners scoring higher this week</span>
             </div>
 
-            {/* Premium mock-up floating UI card */}
-            <div className="lg:col-span-5 flex justify-center animate-float">
-              <div className="w-full max-w-sm rounded-2xl glass-strong shadow-2xl p-6 relative">
-                <div className="absolute -top-3 -right-3 size-10 rounded-full bg-gradient-to-tr from-accent to-violet-500 flex items-center justify-center text-white shadow-lg animate-pulse">
-                  <Star className="size-5 fill-current" />
-                </div>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="size-10 rounded-xl bg-accent/15 flex items-center justify-center text-accent">
-                    <Sparkles className="size-5" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-accent tracking-wider uppercase">AI Tutor Evaluation</div>
-                    <div className="text-sm font-extrabold">IELTS Writing Task 2</div>
-                  </div>
-                </div>
-                <div className="space-y-3.5">
-                  <div className="p-3.5 rounded-xl bg-muted/40 border border-border/40">
-                    <div className="flex justify-between items-baseline mb-1">
-                      <span className="text-xs text-muted-foreground font-semibold">Overall Band Score</span>
-                      <span className="text-lg font-black text-emerald-500">7.5</span>
-                    </div>
-                    <div className="w-full bg-border rounded-full h-1.5 overflow-hidden">
-                      <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: '83%' }}></div>
-                    </div>
-                  </div>
-                  <div className="text-xs text-muted-foreground bg-surface/50 border border-border/40 p-3 rounded-lg leading-relaxed">
-                    <span className="text-accent font-bold">Feedback:</span> "Your grammatical range is excellent. However, replace generic verbs like 'make' with 'facilitate' to secure an 8.0."
-                  </div>
-                </div>
-              </div>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Button size="lg" className="rounded-xl bg-accent hover:bg-accent/90 shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:scale-[1.02] transition-all" asChild>
+                <Link to="/auth">
+                  Start Free Prep <ArrowRight className="ml-2 size-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="rounded-xl hover:bg-muted/50 transition-colors" asChild>
+                <Link to="/writing">Try Writing Tutor</Link>
+              </Button>
             </div>
           </div>
         </section>
@@ -250,79 +216,40 @@ function Landing() {
         </section>
 
         {/* AI feature highlight */}
-        <section className="max-w-6xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-12 items-center">
-          <div className="animate-fade-in-up">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-accent mb-2.5">
+        <section className="max-w-4xl mx-auto px-6 py-24 flex flex-col items-center text-center">
+          <div className="animate-fade-in-up w-full">
+            <div className="text-xs font-extrabold uppercase tracking-widest text-accent mb-2.5 flex items-center justify-center gap-2">
+              <Sparkles className="size-3.5 text-accent animate-pulse" />
               Instant Feedback Loop
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight font-heading mb-4 leading-tight">
               Real-time feedback that feels like a private examiner.
             </h2>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+            <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-2xl mx-auto">
               Submit any IELTS, TOEFL, or TOEIC writing task and get instant grammar correction,
               vocabulary upgrades, coherence analysis, and an estimated band score with detailed reasoning.
             </p>
-            <ul className="space-y-3.5 text-sm font-medium">
+            <ul className="grid sm:grid-cols-2 gap-4 text-sm font-medium text-left max-w-2xl mx-auto">
               {[
                 "Estimated band score with examiner reasoning",
                 "Inline grammar fixes with explanations",
                 "Smarter vocabulary and collocation suggestions",
                 "Coherence & cohesion analysis",
               ].map((t) => (
-                <li key={t} className="flex items-start gap-3">
+                <li key={t} className="flex items-start gap-3 bg-card border border-border p-4 rounded-xl shadow-sm hover:shadow-md hover:border-accent/30 transition-all">
                   <div className="size-5 rounded-full bg-accent/15 flex items-center justify-center shrink-0 mt-0.5">
                     <CheckCircle className="size-3 text-accent" />
                   </div>
-                  <span className="text-foreground/95">{t}</span>
+                  <span className="text-foreground/95 leading-snug">{t}</span>
                 </li>
               ))}
             </ul>
-            <div className="mt-8">
-              <Button className="rounded-xl" asChild>
+            <div className="mt-10">
+              <Button size="lg" className="rounded-xl shadow-md" asChild>
                 <Link to="/writing">
                   Try Writing Tutor <ArrowRight className="ml-2 size-4" />
                 </Link>
               </Button>
-            </div>
-          </div>
-          
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-xl hover-glow relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-accent/5 blur-xl rounded-full" />
-            <div className="text-xs font-bold text-muted-foreground mb-4 uppercase tracking-wider flex items-center gap-2">
-              <Sparkles className="size-3.5 text-accent animate-pulse" />
-              Interactive Sample Evaluation
-            </div>
-            <div className="rounded-xl bg-gradient-to-r from-accent/10 to-violet-500/10 border border-accent/15 p-4.5 mb-5 flex items-center justify-between">
-              <div>
-                <div className="text-xs text-accent font-bold uppercase tracking-wider mb-0.5">Estimated band</div>
-                <div className="text-4xl font-black text-foreground font-heading">7.5</div>
-              </div>
-              <span className="text-[10px] bg-accent/20 text-accent font-bold px-2 py-1 rounded-full uppercase">Good User Progress</span>
-            </div>
-            <div className="space-y-3.5 text-sm">
-              <div className="rounded-xl border border-border/80 bg-surface/50 p-3.5">
-                <div className="text-xs font-bold text-accent mb-1.5 uppercase tracking-wider">Grammar Fix</div>
-                <div className="text-muted-foreground line-through decoration-red-500 text-xs mb-1">
-                  It is depend on the situation.
-                </div>
-                <div className="text-foreground font-semibold flex items-center gap-1">
-                  <span className="text-emerald-500">→</span> It depends on the situation.
-                </div>
-              </div>
-              <div className="rounded-xl border border-border/80 bg-surface/50 p-3.5">
-                <div className="text-xs font-bold text-accent mb-1.5 uppercase tracking-wider">Vocabulary Upgrade</div>
-                <div className="text-muted-foreground text-xs">
-                  <span className="line-through decoration-red-500">very important</span>
-                  <span className="text-foreground font-bold mx-2">→</span>
-                  <span className="text-emerald-500 font-extrabold underline bg-emerald-500/10 px-1.5 py-0.5 rounded">crucial</span>
-                </div>
-              </div>
-              <div className="rounded-xl border border-border/80 bg-surface/50 p-3.5">
-                <div className="text-xs font-bold text-accent mb-1.5 uppercase tracking-wider">Coherence Guidance</div>
-                <div className="text-muted-foreground text-xs leading-relaxed">
-                  Add a clearer thesis in the introduction and use linking words to bridge paragraphs 2 and 3.
-                </div>
-              </div>
             </div>
           </div>
         </section>

@@ -132,6 +132,9 @@ const skills = [
   },
 ];
 
+// Global reference to prevent Chrome garbage collection bug with SpeechSynthesis
+let currentUtterance: SpeechSynthesisUtterance | null = null;
+
 function Dashboard() {
   const { user } = useAuth();
   // Word of the Day state
@@ -242,10 +245,30 @@ function Dashboard() {
   // Speaks today's word using Web Speech API TTS
   const speakWord = (word: string) => {
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel(); // Cancel any ongoing speech
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = "en-US";
-      window.speechSynthesis.speak(utterance);
+      // Clear any stuck state synchronously
+      window.speechSynthesis.cancel();
+      
+      currentUtterance = new SpeechSynthesisUtterance(word);
+      currentUtterance.lang = "en-US";
+      currentUtterance.rate = 0.9; // Slightly slower for clarity
+      
+      // Try to find a high-quality English voice
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        const enVoice = voices.find(v => v.lang.startsWith("en-") && v.localService) || voices.find(v => v.lang.startsWith("en-"));
+        if (enVoice) {
+          currentUtterance.voice = enVoice;
+        }
+      }
+
+      // Speak synchronously so it registers as a direct user action
+      window.speechSynthesis.speak(currentUtterance);
+      
+      // If the engine got stuck in a paused state, force it to resume
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+
       toast.success("Playing pronunciation...");
     } else {
       toast.error("Audio pronunciation is not supported in this browser.");
@@ -397,8 +420,8 @@ function Dashboard() {
 
           {/* 4. Word of the Day (lg:col-span-1) with Flip & TTS */}
           <div className="rounded-3xl border border-border bg-card p-6 shadow-md relative overflow-hidden flex flex-col justify-between hover-glow min-h-[260px]">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-violet-500/5 blur-xl rounded-full" />
-            <div>
+            <div className="absolute top-0 right-0 w-24 h-24 bg-violet-500/5 blur-xl rounded-full pointer-events-none" />
+            <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                   <Calendar className="size-3.5" /> Word of the day
@@ -406,7 +429,7 @@ function Dashboard() {
                 {wordData && (
                   <button 
                     onClick={() => speakWord(wordData.word)}
-                    className="p-1.5 rounded-full hover:bg-muted text-accent active:scale-90 transition-transform" 
+                    className="p-1.5 rounded-full hover:bg-muted text-accent active:scale-90 transition-transform cursor-pointer" 
                     title="Listen pronunciation"
                   >
                     <Volume2 className="size-4" />

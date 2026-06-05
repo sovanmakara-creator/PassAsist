@@ -513,11 +513,19 @@ export function ContactPage() {
 /* ------------------------------------------------------------------ */
 function SimpleMarkdown({ content }: { content: string }) {
   if (!content) return null;
-  const blocks = content.split(/\n\n+/);
+  const normalizedContent = content
+    .replace(/\\n/g, '\n')
+    .replace(/\r\n/g, '\n')
+    .replace(/\s+(#{1,3}\s)/g, '\n\n$1')
+    .replace(/\s+(-\s(?:\*\*.*?\*\*|[A-Z]))/g, '\n$1');
+  const blocks = normalizedContent.split(/\n\n+/);
+  
+  const emailIntegrationIdx = blocks.findIndex(b => b.trim().startsWith("### Email Integration"));
+  const visibleBlocks = emailIntegrationIdx >= 0 ? blocks.slice(0, emailIntegrationIdx) : blocks;
 
   return (
     <div className="space-y-6">
-      {blocks.map((block, idx) => {
+      {visibleBlocks.map((block, idx) => {
         const trimmed = block.trim();
         if (!trimmed) return null;
 

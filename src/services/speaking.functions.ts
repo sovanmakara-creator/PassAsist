@@ -120,7 +120,7 @@ export const fetchSpeakingTopic = createServerFn({ method: "POST" })
         }
       }
 
-      taskText = isRandom ? pickRandom(topics) : (topics[data.topicIndex!] || pickRandom(topics));
+      taskText = isRandom ? pickRandom(topics) : topics[data.topicIndex!] || pickRandom(topics);
     }
 
     return { task: taskText, imageUrl: "" };
@@ -153,7 +153,7 @@ export const analyzeSpeaking = createServerFn({ method: "POST" })
           role: "user",
           parts: [
             {
-              text: `Exam: ${examLabel}\nTask prompt:\n${data.task}\n\nEvaluate the user's spoken response provided in the audio clip. Act as an expert examiner. Return the evaluation in the requested JSON structure. Include a transcription of what the user said in the 'transcript' field.`,
+              text: `Exam: ${examLabel}\nTask prompt:\n${data.task}\n\nEvaluate the user's spoken response provided in the audio clip. Act as an expert examiner. Return the evaluation in the requested JSON structure. Include a transcription of what the user said in the 'transcript' field.\n\nCRITICAL: If the audio clip is silent, contains no spoken English, or consists only of noise/static, you MUST set 'band_score' to 0, 'transcript' to '[No speech detected]', and 'overall' to 'No speech detected.'`,
             },
             {
               inline_data: {
@@ -280,6 +280,17 @@ export const analyzeSpeaking = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("Failed to parse Gemini JSON output:", responseText);
       throw new Error("Failed to parse evaluation data.");
+    }
+
+    // Check if the model detected no speech (or returned 0 score / empty transcript)
+    if (
+      feedback.band_score === 0 ||
+      feedback.transcript?.trim() === "[No speech detected]" ||
+      !feedback.transcript?.trim()
+    ) {
+      throw new Error(
+        "No speech detected. Please speak clearly into your microphone and try again.",
+      );
     }
 
     // Save to evaluations table using the transcript as the "essay" content

@@ -293,7 +293,12 @@ let sectionCounter = 0;
 function SimpleMarkdown({ content }: { content: string }) {
   if (!content) return null;
   sectionCounter = 0;
-  const blocks = content.split(/\n\n+/);
+  const normalizedContent = content
+    .replace(/\\n/g, '\n')
+    .replace(/\r\n/g, '\n')
+    .replace(/\s+(#{1,3}\s)/g, '\n\n$1')
+    .replace(/\s+(-\s(?:\*\*.*?\*\*|[A-Z]))/g, '\n$1');
+  const blocks = normalizedContent.split(/\n\n+/);
 
   return (
     <div className="space-y-6">
