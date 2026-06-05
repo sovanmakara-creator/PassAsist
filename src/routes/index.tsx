@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Moon, Sun } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,6 +57,7 @@ const exams = [
 
 function Landing() {
   const { theme, toggle } = useTheme();
+  const { user } = useAuth();
   return (
     <div className="min-h-dvh bg-background text-foreground animate-fade-in">
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/80 transition-all duration-300">
@@ -72,12 +74,20 @@ function Landing() {
             <Button variant="ghost" size="icon" onClick={toggle} aria-label="Toggle theme" className="rounded-full size-9">
               {theme === "dark" ? <Sun className="size-4.5 text-amber-500" /> : <Moon className="size-4.5 text-indigo-500" />}
             </Button>
-            <Button variant="ghost" size="sm" className="rounded-xl" asChild>
-              <Link to="/auth">Sign in</Link>
-            </Button>
-            <Button size="sm" className="rounded-xl bg-accent hover:bg-accent/90 shadow-md shadow-accent/20 hover:shadow-accent/35 transition-all hover:scale-[1.02]" asChild>
-              <Link to="/auth">Get started</Link>
-            </Button>
+            {user ? (
+              <Button size="sm" className="rounded-xl bg-accent hover:bg-accent/90 shadow-md shadow-accent/20 hover:shadow-accent/35 transition-all hover:scale-[1.02]" asChild>
+                <Link to="/dashboard">Go to Dashboard</Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" className="rounded-xl" asChild>
+                  <Link to="/auth">Sign in</Link>
+                </Button>
+                <Button size="sm" className="rounded-xl bg-accent hover:bg-accent/90 shadow-md shadow-accent/20 hover:shadow-accent/35 transition-all hover:scale-[1.02]" asChild>
+                  <Link to="/auth">Get started</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -114,8 +124,8 @@ function Landing() {
 
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Button size="lg" className="rounded-xl bg-accent hover:bg-accent/90 shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:scale-[1.02] transition-all" asChild>
-                <Link to="/auth">
-                  Start Free Prep <ArrowRight className="ml-2 size-4" />
+                <Link to={user ? "/dashboard" : "/auth"}>
+                  {user ? "Go to Dashboard" : "Start Free Prep"} <ArrowRight className="ml-2 size-4" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="rounded-xl hover:bg-muted/50 transition-colors" asChild>
@@ -162,13 +172,24 @@ function Landing() {
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">{e.desc}</p>
                   </div>
-                  <Link 
-                    to="/auth" 
-                    className="mt-6 flex items-center text-xs font-semibold text-accent hover:underline group"
-                  >
-                    Start practice drills 
-                    <ChevronRight className="size-3.5 ml-1 transition-transform group-hover:translate-x-1" />
-                  </Link>
+                  {user ? (
+                    <Link 
+                      to="/exams/$code" 
+                      params={{ code: e.code.toLowerCase() }}
+                      className="mt-6 flex items-center text-xs font-semibold text-accent hover:underline group"
+                    >
+                      Start practice drills 
+                      <ChevronRight className="size-3.5 ml-1 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  ) : (
+                    <Link 
+                      to="/auth" 
+                      className="mt-6 flex items-center text-xs font-semibold text-accent hover:underline group"
+                    >
+                      Start practice drills 
+                      <ChevronRight className="size-3.5 ml-1 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  )}
                 </div>
               );
             })}
@@ -287,7 +308,9 @@ function Landing() {
             </p>
             <div className="mt-8">
               <Button size="lg" className="rounded-xl bg-accent hover:bg-accent/90 shadow-xl shadow-accent/20 hover:scale-105 transition-transform animate-pulse" asChild>
-                <Link to="/auth">Create Your Account Now</Link>
+                <Link to={user ? "/dashboard" : "/auth"}>
+                  {user ? "Go to Dashboard" : "Create Your Account Now"}
+                </Link>
               </Button>
             </div>
           </div>
