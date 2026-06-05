@@ -15,6 +15,7 @@ import {
   BookOpen,
   Mail,
   Target,
+  LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -94,6 +95,26 @@ function ProfilePage() {
       const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
       setAvatarUrl(dataUrl);
       toast.success("Preset selected!");
+      saveAvatar(dataUrl);
+    }
+  };
+
+  const saveAvatar = async (newAvatarUrl: string) => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          avatar_url: newAvatarUrl,
+        },
+      });
+      if (error) throw error;
+      toast.success("Profile picture saved successfully!");
+      // Short delay to let the toast display, then reload to sync all layouts
+      setTimeout(() => {
+        window.location.reload();
+      }, 600);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to save profile picture.");
     }
   };
 
@@ -130,6 +151,7 @@ function ProfilePage() {
           const resizedBase64 = canvas.toDataURL("image/jpeg", 0.7);
           setAvatarUrl(resizedBase64);
           toast.success("Custom profile picture uploaded!");
+          saveAvatar(resizedBase64);
         }
       };
       img.src = event.target?.result as string;
@@ -158,6 +180,18 @@ function ProfilePage() {
       toast.error(err.message || "Failed to update profile settings.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      toast.success("Signed out successfully!");
+      window.location.href = "/";
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to sign out.");
     }
   };
 
@@ -309,17 +343,29 @@ function ProfilePage() {
                 </div>
               </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full md:w-auto px-6 rounded-xl h-10.5 font-bold shadow-md shadow-accent/15 cursor-pointer bg-accent hover:bg-accent/90 text-white mt-2 hover:scale-[1.01] transition-all"
-              >
-                {loading ? (
-                  <Loader2 className="size-4 animate-spin mr-2" />
-                ) : (
-                  <>Save Profile Changes</>
-                )}
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="px-6 rounded-xl h-10.5 font-bold shadow-md shadow-accent/15 cursor-pointer bg-accent hover:bg-accent/90 text-white hover:scale-[1.01] transition-all flex-1 sm:flex-none"
+                >
+                  {loading ? (
+                    <Loader2 className="size-4 animate-spin mr-2" />
+                  ) : (
+                    <>Save Profile Changes</>
+                  )}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleSignOut}
+                  className="px-6 rounded-xl h-10.5 font-bold cursor-pointer border-destructive/30 hover:border-destructive hover:bg-destructive/10 text-destructive hover:scale-[1.01] transition-all flex-1 sm:flex-none flex items-center justify-center"
+                >
+                  <LogOut className="size-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
             </form>
           </div>
         </div>
