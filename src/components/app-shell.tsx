@@ -22,6 +22,16 @@ import { useTheme } from "@/components/theme-provider";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -48,6 +58,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return false;
   });
   const [showMore, setShowMore] = useState(false);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
   const toggleSidebar = () => {
     const nextValue = !collapsed;
@@ -60,7 +71,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     activeNav.push({ to: "/admin", label: "Admin Panel", icon: Shield });
   }
 
-  const signOut = async () => {
+  const handleSignOut = async () => {
+    setShowSignOutConfirm(false);
     await supabase.auth.signOut();
     navigate({ to: "/" });
   };
@@ -184,7 +196,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={signOut} 
+              onClick={() => setShowSignOutConfirm(true)} 
               className={`justify-start text-destructive hover:text-destructive hover:bg-destructive/10 rounded-xl ${collapsed ? "justify-center px-0" : ""}`}
             >
               <LogOut className={`size-4 ${collapsed ? "" : "mr-2"}`} />
@@ -314,7 +326,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Button 
                     variant="destructive" 
                     size="lg" 
-                    onClick={() => { signOut(); setShowMore(false); }} 
+                    onClick={() => { setShowSignOutConfirm(true); setShowMore(false); }} 
                     className="w-full justify-start rounded-xl h-11"
                   >
                     <LogOut className="size-4 mr-3" />
@@ -351,6 +363,29 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </footer>
       </div>
+
+      {/* Sign Out Confirmation Dialog */}
+      <AlertDialog open={showSignOutConfirm} onOpenChange={setShowSignOutConfirm}>
+        <AlertDialogContent className="rounded-2xl border border-border bg-card p-6 shadow-xl max-w-sm sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-lg font-bold">Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground mt-2">
+              You will be signed out of your PassAssist account and redirected to the home page.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-6">
+            <AlertDialogCancel className="rounded-xl font-semibold border-border">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleSignOut}
+              className="rounded-xl font-semibold bg-destructive hover:bg-destructive/90 text-white border-none shadow-sm cursor-pointer"
+            >
+              Yes, Sign Out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
