@@ -371,8 +371,8 @@ function ProfilePage() {
                   <AlertDialogTrigger asChild>
                     <Button
                       type="button"
-                      variant="outline"
-                      className="px-6 rounded-xl h-10.5 font-bold cursor-pointer border-destructive/30 hover:border-destructive hover:bg-destructive/10 text-destructive hover:scale-[1.01] transition-all flex-1 sm:flex-none flex items-center justify-center"
+                      variant="ghost"
+                      className="px-6 rounded-xl h-10.5 font-bold cursor-pointer border border-destructive/30 text-destructive hover:text-destructive hover:bg-destructive/10 hover:border-destructive hover:scale-[1.01] transition-all flex-1 sm:flex-none flex items-center justify-center bg-background"
                     >
                       <LogOut className="size-4 mr-2" />
                       Sign Out
