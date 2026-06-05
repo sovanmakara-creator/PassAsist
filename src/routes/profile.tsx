@@ -7,6 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   User,
   Sparkles,
   Camera,
@@ -356,15 +367,37 @@ function ProfilePage() {
                   )}
                 </Button>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleSignOut}
-                  className="px-6 rounded-xl h-10.5 font-bold cursor-pointer border-destructive/30 hover:border-destructive hover:bg-destructive/10 text-destructive hover:scale-[1.01] transition-all flex-1 sm:flex-none flex items-center justify-center"
-                >
-                  <LogOut className="size-4 mr-2" />
-                  Sign Out
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="px-6 rounded-xl h-10.5 font-bold cursor-pointer border-destructive/30 hover:border-destructive hover:bg-destructive/10 text-destructive hover:scale-[1.01] transition-all flex-1 sm:flex-none flex items-center justify-center"
+                    >
+                      <LogOut className="size-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="rounded-2xl border border-border bg-card p-6 shadow-xl max-w-sm sm:max-w-md">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-lg font-bold">Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription className="text-sm text-muted-foreground mt-2">
+                        You will be signed out of your PassAssist account and redirected to the home page.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="mt-6">
+                      <AlertDialogCancel className="rounded-xl font-semibold border-border">
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleSignOut}
+                        className="rounded-xl font-semibold bg-destructive hover:bg-destructive/90 text-white border-none shadow-sm cursor-pointer"
+                      >
+                        Yes, Sign Out
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </form>
           </div>
