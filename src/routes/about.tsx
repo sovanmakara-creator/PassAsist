@@ -16,6 +16,7 @@ import {
   Clock,
   BookOpen,
 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -74,6 +75,7 @@ function estimateReadingTime(text: string): number {
 /* ------------------------------------------------------------------ */
 export function AboutPage() {
   const { theme, toggle } = useTheme();
+  const { user } = useAuth();
   const [title, setTitle] = useState("About Us");
   const [content, setContent] = useState(DEFAULT_CONTENT);
   const [loading, setLoading] = useState(true);
@@ -124,7 +126,7 @@ export function AboutPage() {
       {/* ───────── Header ───────── */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
         <div className="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
             <span className="text-lg font-bold tracking-tight transition-colors group-hover:text-accent">
               Pass<span className="text-accent">Assist</span>
             </span>
@@ -134,8 +136,8 @@ export function AboutPage() {
               {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/" className="gap-1.5">
-                <ArrowLeft className="size-3.5" /> Home
+              <Link to={user ? "/dashboard" : "/"} className="gap-1.5">
+                <ArrowLeft className="size-3.5" /> {user ? "Dashboard" : "Home"}
               </Link>
             </Button>
           </div>
@@ -157,8 +159,8 @@ export function AboutPage() {
             aria-label="Breadcrumb"
             className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground"
           >
-            <Link to="/" className="hover:text-accent transition-colors">
-              Home
+            <Link to={user ? "/dashboard" : "/"} className="hover:text-accent transition-colors">
+              {user ? "Dashboard" : "Home"}
             </Link>
             <ChevronRight className="size-3.5 opacity-50" />
             <span className="text-foreground font-medium">About</span>
@@ -243,7 +245,7 @@ export function AboutPage() {
             {/* Left side — branding */}
             <div>
               <Link
-                to="/"
+                to={user ? "/dashboard" : "/"}
                 className="text-lg font-bold tracking-tight inline-flex items-center gap-1.5"
               >
                 Pass<span className="text-accent">Assist</span>

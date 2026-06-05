@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Moon,
   Sun,
@@ -67,6 +68,7 @@ const KEY_POINTS = [
 
 export function TermsPage() {
   const { theme, toggle } = useTheme();
+  const { user } = useAuth();
   const [title, setTitle] = useState("Terms of Service");
   const [content, setContent] = useState(DEFAULT_CONTENT);
   const [loading, setLoading] = useState(true);
@@ -117,7 +119,7 @@ export function TermsPage() {
       {/* ─── Header ─── */}
       <header className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
             <span className="text-lg font-bold tracking-tight transition-colors">
               Pass<span className="text-accent">Assist</span>
             </span>
@@ -127,9 +129,9 @@ export function TermsPage() {
               {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/">
+              <Link to={user ? "/dashboard" : "/"}>
                 <ArrowLeft className="size-4 mr-1.5" />
-                Home
+                {user ? "Dashboard" : "Home"}
               </Link>
             </Button>
           </div>
@@ -154,8 +156,8 @@ export function TermsPage() {
           <div className="relative max-w-5xl mx-auto px-6 pt-10 pb-14">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-8">
-              <Link to="/" className="hover:text-foreground transition-colors">
-                Home
+              <Link to={user ? "/dashboard" : "/"} className="hover:text-foreground transition-colors">
+                {user ? "Dashboard" : "Home"}
               </Link>
               <ChevronRight className="size-3.5 text-muted-foreground/50" />
               <span className="text-foreground font-medium">Terms of Service</span>

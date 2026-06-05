@@ -17,6 +17,7 @@ import {
   Eye,
   Database,
 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -66,6 +67,7 @@ const SECTION_ICONS: Record<number, React.ElementType> = {
 /* ------------------------------------------------------------------ */
 export function PrivacyPage() {
   const { theme, toggle } = useTheme();
+  const { user } = useAuth();
   const [title, setTitle] = useState("Privacy Policy");
   const [content, setContent] = useState(DEFAULT_CONTENT);
   const [loading, setLoading] = useState(true);
@@ -195,7 +197,7 @@ export function PrivacyPage() {
       {/* ── Header ──────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
             <span className="text-lg font-bold tracking-tight transition-colors">
               Prep
               <span className="text-accent group-hover:brightness-110 transition-all">AI</span>
@@ -212,9 +214,9 @@ export function PrivacyPage() {
               {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </Button>
             <Button variant="ghost" size="sm" asChild className="rounded-full">
-              <Link to="/">
+              <Link to={user ? "/dashboard" : "/"}>
                 <ArrowLeft className="size-3.5 mr-1.5" />
-                Home
+                {user ? "Dashboard" : "Home"}
               </Link>
             </Button>
           </div>
@@ -244,8 +246,8 @@ export function PrivacyPage() {
             <div className="relative max-w-6xl mx-auto px-6 pt-10 pb-14 md:pt-14 md:pb-20">
               {/* Breadcrumb */}
               <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-8">
-                <Link to="/" className="hover:text-foreground transition-colors">
-                  Home
+                <Link to={user ? "/dashboard" : "/"} className="hover:text-foreground transition-colors">
+                  {user ? "Dashboard" : "Home"}
                 </Link>
                 <ChevronRight className="size-3 opacity-50" />
                 <span className="text-foreground font-medium">Privacy Policy</span>

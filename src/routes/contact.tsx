@@ -19,6 +19,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -89,6 +90,7 @@ const FAQS = [
 /* ------------------------------------------------------------------ */
 export function ContactPage() {
   const { theme, toggle } = useTheme();
+  const { user } = useAuth();
   const [title, setTitle] = useState("Contact Us");
   const [content, setContent] = useState(DEFAULT_CONTENT);
   const [loading, setLoading] = useState(true);
@@ -213,7 +215,7 @@ export function ContactPage() {
       {/* ───────── Header ───────── */}
       <header className="border-b border-border bg-background/80 backdrop-blur-lg sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
             <span className="text-lg font-bold tracking-tight transition-colors group-hover:opacity-80">
               Pass<span className="text-accent">Assist</span>
             </span>
@@ -229,7 +231,7 @@ export function ContactPage() {
               {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/">Home</Link>
+              <Link to={user ? "/dashboard" : "/"}>{user ? "Dashboard" : "Home"}</Link>
             </Button>
           </div>
         </div>
@@ -257,8 +259,8 @@ export function ContactPage() {
             aria-label="Breadcrumb"
             className="flex items-center gap-1.5 text-sm text-muted-foreground mb-8 animate-[fadeInUp_0.5s_ease_both]"
           >
-            <Link to="/" className="hover:text-accent transition-colors font-medium">
-              Home
+            <Link to={user ? "/dashboard" : "/"} className="hover:text-accent transition-colors font-medium">
+              {user ? "Dashboard" : "Home"}
             </Link>
             <ChevronRight className="size-3.5 shrink-0 opacity-50" />
             <span className="text-foreground font-medium">Contact</span>
